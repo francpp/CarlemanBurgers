@@ -1,0 +1,28 @@
+# Spatial discretization for Euler's method
+nx=16
+# Temporal discretization for Euler's method
+nt=4000
+# Spatial discretization for the pdepe solver
+nx_pde=100
+# Temporal discretization for the pdepe solver
+nt_pde=40000
+
+# Desired Reynolds number
+Re0=20
+# Domain length
+L0=1
+# Initial maximum velocity
+U0=1/sqrt(nx-1)
+# Linear damping coefficient
+beta=0
+# Number of oscillations of the sinusoidal initial condition inside the domain
+f=1
+# Simulation time
+T=3
+# Source function
+# F0_fun=@(t,x) U0*exp(-(x-L0/4).^2/(2*(L0/32)^2)).*cos(2*pi*t)
+
+# Maximum Carleman truncation level
+N_max=4
+# Degree of the Carleman ODE, should not be changed
+ode_deg=2
