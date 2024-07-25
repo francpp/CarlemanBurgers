@@ -1,1 +1,25 @@
 .vscode
+/include/*
+
+# generated documentation
+/src/*/doc/*
+
+# configuration files
+Makefile.inc
+
+# backup files
+*~
+
+# c++ compiled
+*.o
+*.s
+a.out
+main
+*.a
+*.so
+
+# makefile aux
+make.dep
+
+# simulation results
+*.dat
