@@ -1,6 +1,6 @@
 #include "GetPot"
-#include "readParameters.hpp"
 #include "json.hpp"
+#include "readParameters.hpp"
 #include <fstream>
 parameters
 readParameters(std::string const &filename, bool verbose)
@@ -35,7 +35,7 @@ readParameters(std::string const &filename, bool verbose)
   values.beta = ifile("beta", defaults.beta);
   values.f = ifile("f", defaults.f);
   values.T = ifile("T", defaults.T);
-  //values.F0_fun = ifile("F0_fun", defaults.F0_fun);
+  // values.F0_fun = ifile("F0_fun", defaults.F0_fun);
   values.N_max = ifile("N_max", defaults.N_max);
   values.ode_deg = ifile("ode_deg", defaults.ode_deg);
   if(verbose)
@@ -71,9 +71,9 @@ readParameters_json(std::string const &filename, bool verbose)
   else
     check.close();
 
-  std::ifstream jfile(filename);
+  std::ifstream  jfile(filename);
   nlohmann::json ifile;
-  jfile>>ifile;
+  jfile >> ifile;
   parameters values;
   // Read parameters from getpot ddata base
   values.nx = ifile.value("nx", defaults.nx);
@@ -86,14 +86,14 @@ readParameters_json(std::string const &filename, bool verbose)
   values.beta = ifile.value("beta", defaults.beta);
   values.f = ifile.value("f", defaults.f);
   values.T = ifile.value("T", defaults.T);
-  //values.F0_fun = ifile.value("F0_fun", defaults.F0_fun);
+  // values.F0_fun = ifile.value("F0_fun", defaults.F0_fun);
   values.N_max = ifile.value("N_max", defaults.N_max);
   values.ode_deg = ifile.value("ode_deg", defaults.ode_deg);
   if(verbose)
     {
       std::cout << "PARAMETER VALUES IN JSON FILE"
                 << "\n";
-      std::cout<<std::setw(4)<<ifile;
+      std::cout << std::setw(4) << ifile;
       std::cout << std::endl;
       std::cout << "ACTUAL VALUES"
                 << "\n"

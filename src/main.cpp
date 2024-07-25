@@ -1,14 +1,14 @@
-#include "GetPot"               // for reading parameters
+#include "GetPot" // for reading parameters
 #ifdef GNUPLOT
 #include "gnuplot-iostream.hpp" // interface with gnuplot
 #endif
 #include "readParameters.hpp"
-#include <cmath>    // (for sqrt)
-#include <iostream> // input output
-#include <tuple> // I am using tuples to pass data to gnuplot iostream
-#include <vector> // For vectors
-#include <numeric> // For std::iota
 #include <algorithm> // For std::generate
+#include <cmath>     // (for sqrt)
+#include <iostream>  // input output
+#include <numeric>   // For std::iota
+#include <tuple>     // I am using tuples to pass data to gnuplot iostream
+#include <vector>    // For vectors
 /*!
   @file main.cpp
   @brief Carleman Burgers
@@ -42,7 +42,7 @@ main(int argc, char **argv)
 {
   using namespace std; // avoid std::
   int    status{0};    // final program status
-  bool jsonfile=false;
+  bool   jsonfile = false;
   GetPot cl(argc, argv);
   if(cl.search(2, "-h", "--help"))
     {
@@ -53,62 +53,66 @@ main(int argc, char **argv)
   bool verbose = cl.search(1, "-v");
   // Get file with parameter values
   string filename = cl.follow("parameters.pot", "-p");
-  auto pos = filename.find(".json");
+  auto   pos = filename.find(".json");
   if(pos != std::string::npos)
-  {
-    jsonfile=true;
-    std::cout<<"Json input file\n";
-  }
+    {
+      jsonfile = true;
+      std::cout << "Json input file\n";
+    }
   else
-  {
-    jsonfile=false;
-    std::cout<<"Getpot input file\n";
-  }
+    {
+      jsonfile = false;
+      std::cout << "Getpot input file\n";
+    }
   cout << "Reading parameters from " << filename << std::endl;
   parameters param;
-    if(jsonfile)
-      param=   readParameters_json(filename, verbose);
-    else
-      param=   readParameters(filename, verbose);
+  if(jsonfile)
+    param = readParameters_json(filename, verbose);
+  else
+    param = readParameters(filename, verbose);
 
-  #if __cplusplus < 201703L
-    // This version is perfectly fine and
-    // works also if you compile with C++17, but with C++17 you
-    // may make things simpler
-    // Transfer parameters to local variables, to avoid having towrite every time
-    // param.xx. I use references to save memory (not really an issue here, it is
-    // just to show a possible  use of references)
-    const int nx = 16; // Spatial discretization for Euler's method
-    const int nt = 4000; // Temporal discretization for Euler's method
-    const int nx_pde = 100; // Spatial discretization for the pdepe solver
-    const int nt_pde = 40000; // Temporal discretization for the pdepe solver
+#if __cplusplus < 201703L
+  // This version is perfectly fine and
+  // works also if you compile with C++17, but with C++17 you
+  // may make things simpler
+  // Transfer parameters to local variables, to avoid having towrite every time
+  // param.xx. I use references to save memory (not really an issue here, it is
+  // just to show a possible  use of references)
+  const int nx = 16;        // Spatial discretization for Euler's method
+  const int nt = 4000;      // Temporal discretization for Euler's method
+  const int nx_pde = 100;   // Spatial discretization for the pdepe solver
+  const int nt_pde = 40000; // Temporal discretization for the pdepe solver
 
-    const double Re0 = 20; // Desired Reynolds number
-    const double L0 = 1; // Domain length
-    const double U0 = 1/sqrt(nx-1); // Initial maximum velocity
-    const double beta = 0; // Linear damping coefficient
-    const double f = 1; // Number of oscillations of the sinusoidal initial condition inside the domain
-    const double T = 3; // Simulation time
-    //auto F0_fun = [](double t, double x) { return U0*exp(-(x-L0/4)*(x-L0/4)/(2*(L0/32)*(L0/32)))*cos(2*M_PI*t); }; // Source function.
-    const int N_max = 4; // Maximum Carleman truncation level
-    const int ode_deg = 2; // Degree of the Carleman ODE, should not be changed
+  const double Re0 = 20;              // Desired Reynolds number
+  const double L0 = 1;                // Domain length
+  const double U0 = 1 / sqrt(nx - 1); // Initial maximum velocity
+  const double beta = 0;              // Linear damping coefficient
+  const double f = 1; // Number of oscillations of the sinusoidal initial
+                      // condition inside the domain
+  const double T = 3; // Simulation time
+  // auto F0_fun = [](double t, double x) { return
+  // U0*exp(-(x-L0/4)*(x-L0/4)/(2*(L0/32)*(L0/32)))*cos(2*M_PI*t); }; // Source
+  // function.
+  const int N_max = 4;   // Maximum Carleman truncation level
+  const int ode_deg = 2; // Degree of the Carleman ODE, should not be changed
 
-  #else
-    // C++17 onwards version. This version works only with at least C++17
-    // A oneliner! This is called structured bindings. It works because parameter
-    // class is an aggregate!
+#else
+  // C++17 onwards version. This version works only with at least C++17
+  // A oneliner! This is called structured bindings. It works because parameter
+  // class is an aggregate!
 
-      const auto &[nx, nt, nx_pde, nt_pde, Re0, L0, U0, beta, f, T, N_max, ode_deg] = param;
-      
-  #endif
+  const auto &[nx, nt, nx_pde, nt_pde, Re0, L0, U0, beta, f, T, N_max,
+               ode_deg] = param;
+
+#endif
 
   // Truncation levels
   std::vector<int> Ns(N_max);
-  std::iota(Ns.begin(), Ns.end(), 1); 
+  std::iota(Ns.begin(), Ns.end(), 1);
 
   const auto nu = U0 * L0 / Re0; // Viscosity
-  const auto Tnl = L0 / U0; // Nonlinear time
-  const auto t_plot = Tnl / 3; // Time to plot solution
+  const auto Tnl = L0 / U0;      // Nonlinear time
+  const auto t_plot = Tnl / 3;   // Time to plot solution
 
   // Spatial domain edges
   const auto x0 = -L0 / 2;
@@ -123,40 +127,37 @@ main(int argc, char **argv)
   const auto dt = (t1 - t0) / (nt - 1);
 
   std::vector<double> xs(nx);
-  std::generate(xs.begin(), xs.end(), [n = 0, x0, dx]() mutable {
-      return x0 + n++ * dx;
-  });
+  std::generate(xs.begin(), xs.end(),
+                [n = 0, x0, dx]() mutable { return x0 + n++ * dx; });
 
   std::vector<double> ts(nt);
-  std::generate(ts.begin(), ts.end(), [n = 0, t0, dt]() mutable {
-      return t0 + n++ * dt;
-  });
+  std::generate(ts.begin(), ts.end(),
+                [n = 0, t0, dt]() mutable { return t0 + n++ * dt; });
 
   // ode45 discretization
   const auto nt_ode = nt * 10; // Make it more accurate than the Euler solution
   const auto dt_ode = (t1 - t0) / (nt_ode - 1);
   std::vector<double> ts_ode(nt_ode);
-  std::generate(ts_ode.begin(), ts_ode.end(), [n = 0, t0, dt_ode]() mutable {
-      return t0 + n++ * dt_ode;
-  });
+  std::generate(ts_ode.begin(), ts_ode.end(),
+                [n = 0, t0, dt_ode]() mutable { return t0 + n++ * dt_ode; });
 
   // pdepe discretization interval sizes
-  const auto dx_pde = (x1 - x0) / (nx_pde - 1); // Spatial discretization interval size for pdepe solver
+  const auto dx_pde =
+    (x1 - x0) /
+    (nx_pde - 1); // Spatial discretization interval size for pdepe solver
   const auto dt_pde = (t1 - t0) / (nt_pde - 1);
   const auto xs_pde = [&] {
-      std::vector<double> v(nx_pde);
-      std::generate(v.begin(), v.end(), [n = 0, x0, dx_pde]() mutable {
-          return x0 + n++ * dx_pde;
-      });
-      return v;
+    std::vector<double> v(nx_pde);
+    std::generate(v.begin(), v.end(),
+                  [n = 0, x0, dx_pde]() mutable { return x0 + n++ * dx_pde; });
+    return v;
   }();
 
   const auto ts_pde = [&] {
-      std::vector<double> v(nt_pde);
-      std::generate(v.begin(), v.end(), [n = 0, t0, dt_pde]() mutable {
-          return t0 + n++ * dt_pde;
-      });
-      return v;
+    std::vector<double> v(nt_pde);
+    std::generate(v.begin(), v.end(),
+                  [n = 0, t0, dt_pde]() mutable { return t0 + n++ * dt_pde; });
+    return v;
   }();
 
   // Analytic solution
@@ -170,7 +171,8 @@ main(int argc, char **argv)
   ofstream f_stream("result.dat");
   // In gnuplot lines beginning with # are comments
   // \t writes a tab
-  f_stream << "#node coordinate\tcomputed solution\texact solution" << std::endl;
+  f_stream << "#node coordinate\tcomputed solution\texact solution"
+           << std::endl;
   for(int m = 0; m <= 10; m++)
     {
       f_stream.setf(std::ios::left, std::ios::adjustfield);
@@ -179,7 +181,7 @@ main(int argc, char **argv)
       f_stream << m << "\t\t" << theta[m] << "\t\t" << thetaa[m] << "\n";
       coor[m] = m;
     }
-  // If you have gnuplot iostream you get the plot on the screen
+    // If you have gnuplot iostream you get the plot on the screen
 #ifdef GNUPLOT
   Gnuplot gp; // gnuplot iostream! Plots solution on the screen
   // It may not work on virtual machines. Take it out in that case

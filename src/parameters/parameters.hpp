@@ -1,7 +1,7 @@
 #ifndef HH_Parameters_HH
 #define HH_Parameters_HH
-#include <iosfwd>
 #include <cmath> // for sqrt
+#include <iosfwd>
 /*!
  * A structure holding the parameters
  *
@@ -22,10 +22,11 @@ struct parameters
   //! Domain length
   double L0 = 1;
   //! Initial maximum velocity
-  double U0 = 1/sqrt(nx-1);
+  double U0 = 1 / sqrt(nx - 1);
   //! Linear damping coefficient
   double beta = 0;
-  //! Number of oscillations of the sinusoidal initial condition inside the domain
+  //! Number of oscillations of the sinusoidal initial condition inside the
+  //! domain
   double f = 1;
   //! Simulation time
   double T = 3;

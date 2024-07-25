@@ -1,7 +1,7 @@
 #ifndef HH_READPARAMETERS_HH
 #define HH_READPARAMETERS_HH
-#include <string>
 #include "parameters.hpp"
+#include <string>
 //! Reads problem parameters from GetPot file
 /*!
   @param filename The getopot file with the new values
@@ -13,5 +13,6 @@ parameters readParameters(std::string const &filename, bool verbose = false);
   @param filename The json file with the parameter values
   @param verbose Prints some information on the parameters
  */
-parameters readParameters_json(std::string const &filename, bool verbose = false);
+parameters readParameters_json(std::string const &filename,
+                               bool               verbose = false);
 #endif

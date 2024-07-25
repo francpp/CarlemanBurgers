@@ -15,7 +15,7 @@ operator<<(std::ostream &out, const parameters &p)
   out << "beta = " << p.beta << "\n";
   out << "f = " << p.f << "\n";
   out << "T = " << p.T << "\n";
-  //out << "F0_fun = " << p.F0_fun << "\n";
+  // out << "F0_fun = " << p.F0_fun << "\n";
   out << "N_max = " << p.N_max << "\n";
   out << "ode_deg = " << p.ode_deg << "\n";
   return out;
