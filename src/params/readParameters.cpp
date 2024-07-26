@@ -36,11 +36,9 @@ readParameters(const std::string &filename, bool verbose)
   values.nt_pde = ifile("nt_pde", defaults.nt_pde);
   values.Re0 = ifile("Re0", defaults.Re0);
   values.L0 = ifile("L0", defaults.L0);
-  values.U0 = ifile("U0", defaults.U0);
   values.beta = ifile("beta", defaults.beta);
   values.f = ifile("f", defaults.f);
   values.T = ifile("T", defaults.T);
-  // values.F0_fun = ifile("F0_fun", defaults.F0_fun);
   values.N_max = ifile("N_max", defaults.N_max);
   values.ode_deg = ifile("ode_deg", defaults.ode_deg);
   if(verbose)
@@ -87,11 +85,9 @@ readParameters_json(const std::string &filename, bool verbose)
   values.nt_pde = ifile.value("nt_pde", defaults.nt_pde);
   values.Re0 = ifile.value("Re0", defaults.Re0);
   values.L0 = ifile.value("L0", defaults.L0);
-  values.U0 = ifile.value("U0", defaults.U0);
   values.beta = ifile.value("beta", defaults.beta);
   values.f = ifile.value("f", defaults.f);
   values.T = ifile.value("T", defaults.T);
-  // values.F0_fun = ifile.value("F0_fun", defaults.F0_fun);
   values.N_max = ifile.value("N_max", defaults.N_max);
   values.ode_deg = ifile.value("ode_deg", defaults.ode_deg);
   if(verbose)

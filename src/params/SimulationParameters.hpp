@@ -43,6 +43,8 @@ struct SimulationParameters
   int N_max = 4;
   //! Degree of the Carleman ODE
   int ode_deg = 2;
+
+  void initialize();
 };
 
 //! Prints parameters
