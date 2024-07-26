@@ -1,13 +1,20 @@
-#ifndef HH_Parameters_HH
-#define HH_Parameters_HH
+#ifndef SIMULATION_PARAMETERS_HPP
+#define SIMULATION_PARAMETERS_HPP
+
 #include <cmath> // for sqrt
+#include <functional>
 #include <iosfwd>
+#include <iostream>
+
+namespace sim::params
+{
+
 /*!
  * A structure holding the parameters
  *
  * It is an aggregate, you can use structured binding and brace initialization
  */
-struct parameters
+struct SimulationParameters
 {
   //! Spatial discretization for Euler's method
   int nx = 16;
@@ -37,6 +44,10 @@ struct parameters
   //! Degree of the Carleman ODE
   int ode_deg = 2;
 };
+
 //! Prints parameters
-std::ostream &operator<<(std::ostream &, const parameters &);
-#endif
+std::ostream &operator<<(std::ostream &, const SimulationParameters &);
+
+} // namespace sim::params
+
+#endif // SIMULATION_PARAMETERS_HPP

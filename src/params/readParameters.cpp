@@ -2,12 +2,17 @@
 #include "json.hpp"
 #include "readParameters.hpp"
 #include <fstream>
-parameters
-readParameters(std::string const &filename, bool verbose)
+#include <iostream>
+
+namespace sim::params
+{
+
+SimulationParameters
+readParameters(const std::string &filename, bool verbose)
 {
   // Parameter default constructor fills it with the defaults values
-  parameters defaults;
-  // checks if file exixts and is readable
+  SimulationParameters defaults;
+  // checks if file exists and is readable
   std::ifstream check(filename);
   if(!check)
     {
@@ -22,9 +27,9 @@ readParameters(std::string const &filename, bool verbose)
   else
     check.close();
 
-  GetPot     ifile(filename.c_str());
-  parameters values;
-  // Read parameters from getpot ddata base
+  GetPot               ifile(filename.c_str());
+  SimulationParameters values;
+  // Read parameters from getpot data base
   values.nx = ifile("nx", defaults.nx);
   values.nt = ifile("nt", defaults.nt);
   values.nx_pde = ifile("nx_pde", defaults.nx_pde);
@@ -51,12 +56,12 @@ readParameters(std::string const &filename, bool verbose)
   return values;
 }
 
-parameters
-readParameters_json(std::string const &filename, bool verbose)
+SimulationParameters
+readParameters_json(const std::string &filename, bool verbose)
 {
   // Parameter default constructor fills it with the defaults values
-  parameters defaults;
-  // checks if file exixts and is readable
+  SimulationParameters defaults;
+  // checks if file exists and is readable
   std::ifstream check(filename);
   if(!check)
     {
@@ -74,8 +79,8 @@ readParameters_json(std::string const &filename, bool verbose)
   std::ifstream  jfile(filename);
   nlohmann::json ifile;
   jfile >> ifile;
-  parameters values;
-  // Read parameters from getpot ddata base
+  SimulationParameters values;
+  // Read parameters from json file
   values.nx = ifile.value("nx", defaults.nx);
   values.nt = ifile.value("nt", defaults.nt);
   values.nx_pde = ifile.value("nx_pde", defaults.nx_pde);
@@ -101,3 +106,5 @@ readParameters_json(std::string const &filename, bool verbose)
     }
   return values;
 }
+
+} // namespace sim::params

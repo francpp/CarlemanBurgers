@@ -1,7 +1,10 @@
-#include "parameters.hpp"
-#include <iostream>
+#include "SimulationParameters.hpp"
+
+namespace sim::params
+{
+
 std::ostream &
-operator<<(std::ostream &out, const parameters &p)
+operator<<(std::ostream &out, const SimulationParameters &p)
 {
   out << "PARAMETER VALUES:"
       << "\n";
@@ -20,3 +23,5 @@ operator<<(std::ostream &out, const parameters &p)
   out << "ode_deg = " << p.ode_deg << "\n";
   return out;
 }
+
+} // namespace sim::params
