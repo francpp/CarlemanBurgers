@@ -4,13 +4,15 @@
 #include "discretization/Discretization.hpp"
 #include "error_analysis/ErrorAnalysis.hpp"
 #include "initial_conditions/InitialConditions.hpp"
-#include "matrix/MatrixOperations.hpp"
+#include "matrix/CarlemanMatrix.hpp"
 #include "params/SimulationParameters.hpp"
 #include "solvers/CarlemanSolver.hpp"
 #include "solvers/EulerSolver.hpp"
 #include "solvers/ODE45Solver.hpp"
 #include "solvers/PDESolver.hpp"
+#include "utils/CarlemanUtils.hpp"
 #include "utils/StabilityChecks.hpp"
+#include <Eigen/Sparse>
 
 namespace sim
 {
@@ -19,7 +21,6 @@ class MainSimulation
   params::SimulationParameters         &params; // Reference to params
   discretization::Discretization        discretization;
   initial_conditions::InitialConditions initialConditions;
-  matrix::MatrixOperations              matrixOperations;
 
   solvers::EulerSolver    eulerSolver;
   solvers::ODE45Solver    ode45Solver;
@@ -28,14 +29,20 @@ class MainSimulation
 
   error_analysis::ErrorAnalysis errorAnalysis;
 
-  void checkStabilityConditions(); // method to check CFL conditions
+  Eigen::SparseMatrix<double> F0; // Sparse matrix for F0
+  Eigen::MatrixXd             F1; // Dense matrix for F1
+  Eigen::MatrixXd             F2; // Dense matrix for F2
+
+  void checkStabilityConditions(); // Method to check CFL conditions
+  void evaluateCarlemanNumber();   // Method to evaluate Carleman number
+  Eigen::SparseMatrix<double>
+  prepareCarlemanMatrix(); // Method to prepare Carleman matrix
 
 public:
-  // Constructor now accepts params as a reference
   MainSimulation(params::SimulationParameters &params);
 
-  void initialize();
-  void run();
+  void initialize(); // Method to initialize the simulation
+  void run();        // Method to run the simulation
 };
 } // namespace sim
 

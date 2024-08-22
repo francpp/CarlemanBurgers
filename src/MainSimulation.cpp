@@ -1,4 +1,5 @@
 #include "MainSimulation.hpp"
+#include "matrix/CarlemanMatrix.hpp"
 
 namespace sim
 {
@@ -6,11 +7,10 @@ namespace sim
 MainSimulation::MainSimulation(params::SimulationParameters &params)
   : params(params), // Initialize the member variable params with the reference
     discretization(params), initialConditions(params, discretization),
-    matrixOperations(params, discretization),
-    eulerSolver(params, discretization, initialConditions, matrixOperations),
-    ode45Solver(params, discretization, initialConditions, matrixOperations),
-    pdeSolver(params, discretization, initialConditions, matrixOperations),
-    carlemanSolver(params, discretization, initialConditions, matrixOperations),
+    eulerSolver(params, discretization, initialConditions),
+    ode45Solver(params, discretization, initialConditions),
+    pdeSolver(params, discretization, initialConditions),
+    carlemanSolver(params, discretization, initialConditions),
     errorAnalysis(eulerSolver, ode45Solver, pdeSolver, carlemanSolver)
 {
   // Constructor implementation
@@ -21,6 +21,46 @@ MainSimulation::initialize()
 {
   params
     .initialize(); // Initialize params (which will now affect all components)
+
+  // Create the discretization and compute initial conditions
+  discretization.createDiscretization();
+  initialConditions.computeInitialConditions();
+  initialConditions.computeForcingBoundaryConditions(); // Compute the forcing
+                                                        // boundary conditions
+
+  // Initialize F0, F1, F2 using the initial conditions
+  F0 = Eigen::SparseMatrix<double>(params.nt, params.nx);
+  F1 = Eigen::MatrixXd::Zero(params.nx, params.nx);
+  F2 = Eigen::MatrixXd::Zero(params.nx, params.nx * params.nx);
+
+  // Fill F0, F1, F2 with data from initialConditions
+  for(int i = 0; i < params.nt; ++i)
+    {
+      for(int j = 0; j < params.nx; ++j)
+        {
+          F0.insert(i, j) = initialConditions.getF0()[i][j];
+        }
+    }
+
+  for(int i = 0; i < params.nx; ++i)
+    {
+      for(int j = 0; j < params.nx; ++j)
+        {
+          F1(i, j) = initialConditions.getF1()[i][j];
+        }
+      for(int j = 0; j < params.nx * params.nx; ++j)
+        {
+          F2(i, j) = initialConditions.getF2()[i][j];
+        }
+    }
+}
+
+Eigen::SparseMatrix<double>
+MainSimulation::prepareCarlemanMatrix()
+{
+  std::vector<int> dNs = matrix::calculateBlockSizes(params.N_max, params.nx);
+  return matrix::assembleCarlemanMatrix(dNs, params.N_max, params.nx,
+                                        params.ode_deg, F0, F1, F2);
 }
 
 void
@@ -32,8 +72,16 @@ MainSimulation::run()
   std::cout << discretization << std::endl;
 
   initialConditions.computeInitialConditions();
+  initialConditions.computeForcingBoundaryConditions();
 
   checkStabilityConditions();
+
+  // Prepare the Carleman matrix
+  Eigen::SparseMatrix<double> carlemanMatrix = prepareCarlemanMatrix();
+
+  evaluateCarlemanNumber();
+
+  // Proceed with the rest of your simulation process...
 }
 
 void
@@ -54,6 +102,26 @@ MainSimulation::checkStabilityConditions()
   catch(const std::runtime_error &e)
     {
       std::cerr << "CFL Condition Error: " << e.what() << std::endl;
+      throw; // Re-throw the exception to terminate the simulation
+    }
+}
+
+void
+MainSimulation::evaluateCarlemanNumber()
+{
+  try
+    {
+      double R = sim::utils::calculateCarlemanConvergenceNumber(
+        initialConditions.getF0(), initialConditions.getF1(),
+        initialConditions.getF2(), initialConditions.getU0s(),
+        discretization.getTs()[1] - discretization.getTs()[0], // dt
+        params.nt, params.nx, params.N_max);
+      std::cout << "Carleman convergence number R: " << R << std::endl;
+    }
+  catch(const std::runtime_error &e)
+    {
+      std::cerr << "Carleman Convergence Number Error: " << e.what()
+                << std::endl;
       throw; // Re-throw the exception to terminate the simulation
     }
 }
