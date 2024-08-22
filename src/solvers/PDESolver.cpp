@@ -5,8 +5,7 @@ namespace sim::solvers
 
 PDESolver::PDESolver(const params::SimulationParameters        &params,
                      const sim::discretization::Discretization &discretization,
-                     const sim::initial_conditions::InitialConditions &ic,
-                     const sim::matrix::MatrixOperations              &mo)
+                     const sim::initial_conditions::InitialConditions &ic)
 {
   // Constructor implementation
 }
