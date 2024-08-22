@@ -12,7 +12,7 @@ void
 Discretization::createDiscretization()
 {
   // Destructure the necessary parameters from getParams() method
-  const auto &[nx, nt, nx_pde, nt_pde, Re0, L0, U0, beta, f, T, N_max,
+  const auto &[nx, nt, nx_pde, nt_pde, Re0, L0, U0, nu, beta, f, T, N_max,
                ode_deg] = getParams();
 
   double x0 = -L0 / 2;

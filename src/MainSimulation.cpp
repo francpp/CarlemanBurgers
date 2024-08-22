@@ -31,8 +31,31 @@ MainSimulation::run()
   discretization.createDiscretization();
   std::cout << discretization << std::endl;
 
-  // initialConditions.computeInitialConditions();
-  // std::cout << "Discretization and initial conditions set up." << std::endl;
+  initialConditions.computeInitialConditions();
+
+  checkStabilityConditions();
+}
+
+void
+MainSimulation::checkStabilityConditions()
+{
+  try
+    {
+      sim::stability::checkCFLConditions(
+        params.U0,
+        discretization.getTs()[1] - discretization.getTs()[0], // dt
+        discretization.getXs()[1] - discretization.getXs()[0], // dx
+        params.nu,
+        (params.T) / (params.nt * 10 - 1),     // dt_ode
+        (params.L0 / 2) / (params.nx_pde - 1), // dx_pde
+        (params.T) / (params.nt_pde - 1)       // dt_pde
+      );
+    }
+  catch(const std::runtime_error &e)
+    {
+      std::cerr << "CFL Condition Error: " << e.what() << std::endl;
+      throw; // Re-throw the exception to terminate the simulation
+    }
 }
 
 } // namespace sim

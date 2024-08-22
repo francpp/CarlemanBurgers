@@ -30,6 +30,8 @@ struct SimulationParameters
   double L0 = 1;
   //! Initial maximum velocity
   double U0 = 1 / sqrt(nx - 1);
+  //! Viscosity
+  double nu = U0 * L0 / Re0;
   //! Linear damping coefficient
   double beta = 0;
   //! Number of oscillations of the sinusoidal initial condition inside the

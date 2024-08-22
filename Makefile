@@ -14,6 +14,7 @@ SRC_FILES = $(wildcard $(SRC_DIR)/*.cpp) \
             $(wildcard $(SRC_DIR)/matrix/*.cpp) \
             $(wildcard $(SRC_DIR)/solvers/*.cpp) \
             $(wildcard $(SRC_DIR)/error_analysis/*.cpp) \
+            $(wildcard $(SRC_DIR)/utils/*.cpp) \
             main.cpp
 OBJ_FILES = $(SRC_FILES:%.cpp=$(BUILD_DIR)/%.o)
 

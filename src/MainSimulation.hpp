@@ -10,6 +10,7 @@
 #include "solvers/EulerSolver.hpp"
 #include "solvers/ODE45Solver.hpp"
 #include "solvers/PDESolver.hpp"
+#include "utils/StabilityChecks.hpp"
 
 namespace sim
 {
@@ -26,6 +27,8 @@ class MainSimulation
   solvers::CarlemanSolver carlemanSolver;
 
   error_analysis::ErrorAnalysis errorAnalysis;
+
+  void checkStabilityConditions(); // method to check CFL conditions
 
 public:
   // Constructor now accepts params as a reference

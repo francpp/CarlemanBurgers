@@ -55,7 +55,7 @@ main(int argc, char **argv)
   // check if we want verbosity
   bool verbose = cl.search(1, "-v");
   // Get file with parameter values
-  std::string filename = cl.follow("parameters.pot", "-p");
+  std::string filename = cl.follow("data/parameters.pot", "-p");
   auto        pos = filename.find(".json");
   if(pos != std::string::npos)
     {
