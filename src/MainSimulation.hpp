@@ -15,7 +15,7 @@ namespace sim
 {
 class MainSimulation
 {
-  params::SimulationParameters          params;
+  params::SimulationParameters         &params; // Reference to params
   discretization::Discretization        discretization;
   initial_conditions::InitialConditions initialConditions;
   matrix::MatrixOperations              matrixOperations;
@@ -28,7 +28,8 @@ class MainSimulation
   error_analysis::ErrorAnalysis errorAnalysis;
 
 public:
-  MainSimulation(params::SimulationParameters params);
+  // Constructor now accepts params as a reference
+  MainSimulation(params::SimulationParameters &params);
 
   void initialize();
   void run();

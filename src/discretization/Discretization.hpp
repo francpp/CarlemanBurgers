@@ -36,12 +36,21 @@ public:
     return ts_pde;
   }
 
+  // Getter for SimulationParameters
+  const sim::params::SimulationParameters &
+  getParams() const
+  {
+    return params;
+  }
+
 private:
   const sim::params::SimulationParameters &params;
   std::vector<double>                      xs, ts, xs_pde, ts_pde;
 
   double dx, dt, dx_pde, dt_pde;
 };
+
+std::ostream &operator<<(std::ostream &, const Discretization &);
 
 } // namespace sim::discretization
 

@@ -11,6 +11,7 @@
 #include <numeric>   // For std::iota
 #include <tuple>     // I am using tuples to pass data to gnuplot iostream
 #include <vector>    // For vectors
+
 /*!
   @file main.cpp
   @brief Carleman Burgers
@@ -27,6 +28,7 @@
 % Herman Øie Kolden, Hari K. Krovi, Nuno F. Loureiro, Konstantina Trivisa,
 % Andrew M. Childs.
  */
+
 //! a helper function. Prints a help message
 void
 printHelp()
@@ -72,8 +74,10 @@ main(int argc, char **argv)
   else
     param = sim::params::readParameters(filename, verbose);
 
-  param.initialize();
+  // Pass param as a reference to MainSimulation
   sim::MainSimulation simulation(param);
+
+  simulation.initialize();
   simulation.run();
   return 0;
 }
