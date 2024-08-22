@@ -1,5 +1,6 @@
 #include "MainSimulation.hpp"
 #include "matrix/CarlemanMatrix.hpp"
+#include <iostream>
 
 namespace sim
 {
@@ -80,6 +81,9 @@ MainSimulation::run()
   Eigen::SparseMatrix<double> carlemanMatrix = prepareCarlemanMatrix();
 
   evaluateCarlemanNumber();
+
+  // Solve the Carleman system
+  carlemanSolver.solveCarlemanSystem();
 
   // Proceed with the rest of your simulation process...
 }
