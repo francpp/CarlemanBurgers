@@ -27,7 +27,7 @@ namespace solvers
     auto   ts = discretization.getTs();
 
     // Create the block sizes
-    std::vector<int> dNs = matrix::calculateBlockSizes(N_max, nx);
+    /*std::vector<int> dNs = matrix::calculateBlockSizes(N_max, nx);
 
     // Initialize solution storage
     ys_c_N.resize(N_max);
@@ -125,7 +125,7 @@ namespace solvers
         std::cout << "Done with N=" << N << std::endl;
 
         ys_c_N[N - 1] = ys.sparseView();
-      }
+      }*/
   }
 
 } // namespace solvers
