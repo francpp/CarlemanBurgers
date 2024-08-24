@@ -67,7 +67,6 @@ InitialConditions::computeForcingBoundaryConditions()
     {
       size_t index1 = (i - 1) * nx + i - 1;
       size_t index2 = (i + 1) * nx + i + 1;
-      std::cout << "index1: " << index1 << " index2: " << index2 << std::endl;
       if((index1 < nx * nx) && (index2 < nx * nx))
         {
           F2[i][index1] = 1 / (4 * dx);

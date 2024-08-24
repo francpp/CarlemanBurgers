@@ -1,4 +1,5 @@
 #include "StabilityChecks.hpp"
+#include <iostream>
 #include <sstream>
 #include <stdexcept>
 
@@ -19,6 +20,13 @@ namespace stability
     double C2_pde = 2 * nu * dt_pde / (dx_pde * dx_pde);
 
     std::ostringstream error_message;
+
+    std::cout << "C1_e: " << C1_e << std::endl;
+    std::cout << "C2_e: " << C2_e << std::endl;
+    std::cout << "C1_ode: " << C1_ode << std::endl;
+    std::cout << "C2_ode: " << C2_ode << std::endl;
+    std::cout << "C1_pde: " << C1_pde << std::endl;
+    std::cout << "C2_pde: " << C2_pde << std::endl;
 
     if(C1_e > 1)
       {
