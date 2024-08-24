@@ -13,8 +13,21 @@ The current implementation is based on the methodology described in the paper ["
 We focus on solving an initial value problem described by the following \(n\)-dimensional quadratic ordinary differential equation (ODE):
 
 ```math
-\frac{du}{dt} = F_2 u^{\ast 2}+ F_1 u + F_0(t), \quad u(0) = u_{\text{in}}.
+\frac{du}{dt} = F_2 u^{\otimes 2}+ F_1 u + F_0(t), \quad u(0) = u_{\text{in}}.
 ```
+Here
+
+```math
+u = \begin{bmatrix} u_1, \dots, u_n \end{bmatrix}^T \in \mathbb{R}^n, \quad u^{\otimes 2} = \begin{bmatrix} u_1^2, u_1 u_2, \dots, u_1 u_n, u_2 u_1, \dots, u_n u_{n-1}, u_n^2 \end{bmatrix}^T \in \mathbb{R}^{n^2}, \text{each} u_j = u_j(t) \text{is a function of $t$ on the interval} \left[0, T\right]
+```
+
+
+```math
+```
+
+```math
+```
+
 
 This problem is then linearized using the Carleman method, leading to the following linear ODE:
 
@@ -24,15 +37,7 @@ This problem is then linearized using the Carleman method, leading to the follow
 
 Additionally, the project addresses the solution of the following partial differential equations (PDEs):
 
-\[
-\partial_t u + (u \cdot \nabla)u + \beta u = \nu \nabla^2 u + f,
-\]
-
-\[
-\partial_t u + u \partial_x u = \nu \partial^2_x u + f,
-\]
-
-where \(u\) represents the velocity field, \(\beta\) is the damping coefficient, \(\nu\) is the viscosity, and \(f\) is an external force.
+TODO
 
 ## Usage Instructions
 
