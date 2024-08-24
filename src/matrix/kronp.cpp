@@ -1,51 +1,40 @@
-// matrix/kronp.cpp
 #include "kronp.hpp"
-#include <execution> // For parallel execution policies
+#include <Eigen/Dense>
 #include <iostream>
-#include <vector>
 
 namespace sim
 {
 namespace matrix
 {
 
-  // Function to calculate the Kronecker product of two matrices
-  std::vector<std::vector<double>>
-  kron(const std::vector<std::vector<double>> &A,
-       const std::vector<std::vector<double>> &B)
+  // Function to calculate the Kronecker product of two matrices using Eigen
+  Eigen::MatrixXd
+  kron(const Eigen::MatrixXd &A, const Eigen::MatrixXd &B)
   {
-    size_t aRows = A.size();
-    size_t aCols = A[0].size();
-    size_t bRows = B.size();
-    size_t bCols = B[0].size();
+    const int aRows = A.rows();
+    const int aCols = A.cols();
+    const int bRows = B.rows();
+    const int bCols = B.cols();
 
-    std::vector<std::vector<double>> C(aRows * bRows,
-                                       std::vector<double>(aCols * bCols, 0));
+    Eigen::MatrixXd C(aRows * bRows, aCols * bCols);
 
-    // Parallelize the outer loop
-    std::for_each(
-      std::execution::par_unseq, A.begin(), A.end(), [&](const auto &aRow) {
-        size_t i = &aRow - &A[0]; // Get the index of the current row in A
-        for(size_t j = 0; j < aCols; ++j)
+    for(int i = 0; i < aRows; ++i)
+      {
+        for(int j = 0; j < aCols; ++j)
           {
-            for(size_t p = 0; p < bRows; ++p)
-              {
-                for(size_t q = 0; q < bCols; ++q)
-                  {
-                    C[i * bRows + p][j * bCols + q] = A[i][j] * B[p][q];
-                  }
-              }
+            C.block(i * bRows, j * bCols, bRows, bCols) = A(i, j) * B;
           }
-      });
+      }
 
     return C;
   }
 
-  // Function to calculate the Kronecker power of a matrix
-  std::vector<std::vector<double>>
-  kronp(const std::vector<std::vector<double>> &A, int k)
+  // Function to calculate the Kronecker power of a matrix using Eigen
+  Eigen::MatrixXd
+  kronp(const Eigen::MatrixXd &A, int k)
   {
-    std::vector<std::vector<double>> B = {{1.0}};
+    Eigen::MatrixXd B(1, 1);
+    B(0, 0) = 1.0;
 
     for(int i = 0; i < k; ++i)
       {
