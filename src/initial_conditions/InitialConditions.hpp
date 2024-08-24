@@ -49,6 +49,8 @@ private:
   std::function<double(double, double)> F0_fun; // Source function
 };
 
+std::ostream &operator<<(std::ostream &, const InitialConditions &);
+
 } // namespace sim::initial_conditions
 
 #endif // INITIAL_CONDITIONS_HPP

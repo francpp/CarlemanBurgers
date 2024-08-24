@@ -43,7 +43,7 @@ Discretization::createDiscretization()
     ts_pde[i] = t0 + i * dt_pde;
 }
 
-// Overload for printing Discretization parameters, including the new ones
+// Overload for printing Discretization parameters
 std::ostream &
 operator<<(std::ostream &out, const Discretization &d)
 {

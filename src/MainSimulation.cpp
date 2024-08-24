@@ -30,30 +30,25 @@ MainSimulation::initialize()
                                                         // boundary conditions
 
   // Initialize F0, F1, F2 using the initial conditions
-  F0 = Eigen::SparseMatrix<double>(params.nt, params.nx);
+  /*F0 = Eigen::SparseMatrix<double>(params.nt, params.nx);
   F1 = Eigen::MatrixXd::Zero(params.nx, params.nx);
   F2 = Eigen::MatrixXd::Zero(params.nx, params.nx * params.nx);
 
   // Fill F0, F1, F2 with data from initialConditions
-  for(int i = 0; i < params.nt; ++i)
-    {
-      for(int j = 0; j < params.nx; ++j)
-        {
-          F0.insert(i, j) = initialConditions.getF0()[i][j];
-        }
+  for (int i = 0; i < params.nt; ++i) {
+    for (int j = 0; j < params.nx; ++j) {
+      F0.insert(i, j) = initialConditions.getF0()[i][j];
     }
+  }
 
-  for(int i = 0; i < params.nx; ++i)
-    {
-      for(int j = 0; j < params.nx; ++j)
-        {
-          F1(i, j) = initialConditions.getF1()[i][j];
-        }
-      for(int j = 0; j < params.nx * params.nx; ++j)
-        {
-          F2(i, j) = initialConditions.getF2()[i][j];
-        }
+  for (int i = 0; i < params.nx; ++i) {
+    for (int j = 0; j < params.nx; ++j) {
+      F1(i, j) = initialConditions.getF1()[i][j];
     }
+    for (int j = 0; j < params.nx * params.nx; ++j) {
+      F2(i, j) = initialConditions.getF2()[i][j];
+    }
+  }*/
 }
 
 Eigen::SparseMatrix<double>
@@ -69,11 +64,8 @@ MainSimulation::run()
 {
   std::cout << "Running simulation..." << std::endl;
   std::cout << params << std::endl;
-  discretization.createDiscretization();
   std::cout << discretization << std::endl;
-
-  initialConditions.computeInitialConditions();
-  initialConditions.computeForcingBoundaryConditions();
+  std::cout << initialConditions << std::endl;
 
   checkStabilityConditions();
 
