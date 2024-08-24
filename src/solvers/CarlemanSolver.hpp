@@ -28,9 +28,8 @@ namespace solvers
     const discretization::Discretization        &discretization;
     const initial_conditions::InitialConditions &initialConditions;
 
-    std::vector<Eigen::SparseMatrix<double>>
-                                ys_c_N; // Solution for each truncation level
-    Eigen::SparseMatrix<double> A;      // Carleman matrix
+    std::vector<Eigen::MatrixXd> ys_c_N; // Solution for each truncation level
+    Eigen::MatrixXd              A;      // Carleman matrix
     Eigen::VectorXd             b_N;    // Inhomogeneous term
   };
 
