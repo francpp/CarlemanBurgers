@@ -30,10 +30,8 @@ namespace utils
                                      int nt, int nx, int N_max)
   {
     // Calculate the eigenvalues of F1
-    std::cout << "I'm here" << std::endl;
 
     std::cout << F1 << std::endl;
-    std::cout << "I'm also here" << std::endl;
 
     Eigen::VectorXcd lambdas = eig(F1);
     std::cout << "lambdas: " << lambdas << std::endl;

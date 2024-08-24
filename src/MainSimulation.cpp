@@ -2,6 +2,7 @@
 #include "matrix/CarlemanMatrix.hpp"
 #include <Eigen/Dense>
 #include <iostream>
+
 namespace sim
 {
 
@@ -36,8 +37,9 @@ Eigen::MatrixXd
 MainSimulation::prepareCarlemanMatrix()
 {
   std::vector<int> dNs = matrix::calculateBlockSizes(params.N_max, params.nx);
-  // return matrix::assembleCarlemanMatrix(dNs, params.N_max, params.nx,
-  //                                       params.ode_deg, F0, F1, F2);
+  Eigen::MatrixXd  carlemanMatrix = matrix::assembleCarlemanMatrix(
+     dNs, params.N_max, params.nx, params.ode_deg, F0, F1, F2);
+  return carlemanMatrix;
 }
 
 void
@@ -63,10 +65,24 @@ MainSimulation::run()
   evaluateCarlemanNumber();
 
   // Prepare the Carleman matrix
-  // Eigen::MatrixXd carlemanMatrix = prepareCarlemanMatrix();
+  Eigen::MatrixXd carlemanMatrix = prepareCarlemanMatrix();
+  // print the size
+  std::cout << "Carleman matrix size is: " << carlemanMatrix.rows() << " x "
+            << carlemanMatrix.cols() << std::endl;
+  // print the sum, the mean, and the max of the matrix
+  std::cout << "Sum of the Carleman matrix: " << carlemanMatrix.sum()
+            << std::endl;
+  std::cout << "Mean of the Carleman matrix: " << carlemanMatrix.mean()
+            << std::endl;
+  std::cout << "Max of the Carleman matrix: " << carlemanMatrix.maxCoeff()
+            << std::endl;
+
+  // print the first 10 rows and columns of the matrix
+  std::cout << "First 10 rows and columns of the Carleman matrix:\n"
+            << carlemanMatrix.block(0, 0, 10, 10) << std::endl;
 
   // Solve the Carleman system
-  // carlemanSolver.solveCarlemanSystem();
+  carlemanSolver.solveCarlemanSystem();
 
   // Proceed with the rest of your simulation process...
 }
