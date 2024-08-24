@@ -1,7 +1,7 @@
 #include "MainSimulation.hpp"
 #include "matrix/CarlemanMatrix.hpp"
+#include <Eigen/Dense>
 #include <iostream>
-
 namespace sim
 {
 
@@ -25,38 +25,19 @@ MainSimulation::initialize()
 
   // Create the discretization and compute initial conditions
   discretization.createDiscretization();
+  checkStabilityConditions();
+
   initialConditions.computeInitialConditions();
   initialConditions.computeForcingBoundaryConditions(); // Compute the forcing
                                                         // boundary conditions
-
-  // Initialize F0, F1, F2 using the initial conditions
-  /*F0 = Eigen::SparseMatrix<double>(params.nt, params.nx);
-  F1 = Eigen::MatrixXd::Zero(params.nx, params.nx);
-  F2 = Eigen::MatrixXd::Zero(params.nx, params.nx * params.nx);
-
-  // Fill F0, F1, F2 with data from initialConditions
-  for (int i = 0; i < params.nt; ++i) {
-    for (int j = 0; j < params.nx; ++j) {
-      F0.insert(i, j) = initialConditions.getF0()[i][j];
-    }
-  }
-
-  for (int i = 0; i < params.nx; ++i) {
-    for (int j = 0; j < params.nx; ++j) {
-      F1(i, j) = initialConditions.getF1()[i][j];
-    }
-    for (int j = 0; j < params.nx * params.nx; ++j) {
-      F2(i, j) = initialConditions.getF2()[i][j];
-    }
-  }*/
 }
 
-Eigen::SparseMatrix<double>
+Eigen::MatrixXd
 MainSimulation::prepareCarlemanMatrix()
 {
   std::vector<int> dNs = matrix::calculateBlockSizes(params.N_max, params.nx);
-  return matrix::assembleCarlemanMatrix(dNs, params.N_max, params.nx,
-                                        params.ode_deg, F0, F1, F2);
+  // return matrix::assembleCarlemanMatrix(dNs, params.N_max, params.nx,
+  //                                       params.ode_deg, F0, F1, F2);
 }
 
 void
@@ -65,17 +46,27 @@ MainSimulation::run()
   std::cout << "Running simulation..." << std::endl;
   std::cout << params << std::endl;
   std::cout << discretization << std::endl;
-  std::cout << initialConditions << std::endl;
+  // std::cout << initialConditions << std::endl;
 
-  checkStabilityConditions();
+  F0 = convertToDenseEigen(initialConditions.getF0());
+  F1 = convertToDenseEigen(initialConditions.getF1());
+  F2 = convertToDenseEigen(initialConditions.getF2());
 
-  // Prepare the Carleman matrix
-  Eigen::SparseMatrix<double> carlemanMatrix = prepareCarlemanMatrix();
+  /*std::cout << "F0: " << F0 << std::endl;
+  std::cout << "F1: " << F1 << std::endl;
+  std::cout << "F2: " << F2 << std::endl;*/
 
+  Eigen::EigenSolver<Eigen::MatrixXd> solver(F1);
+  Eigen::VectorXcd                    eigenvalues = solver.eigenvalues();
+
+  std::cout << "The eigenvalues of F1 are:\n" << eigenvalues << std::endl;
   evaluateCarlemanNumber();
 
+  // Prepare the Carleman matrix
+  // Eigen::MatrixXd carlemanMatrix = prepareCarlemanMatrix();
+
   // Solve the Carleman system
-  carlemanSolver.solveCarlemanSystem();
+  // carlemanSolver.solveCarlemanSystem();
 
   // Proceed with the rest of your simulation process...
 }
@@ -90,9 +81,9 @@ MainSimulation::checkStabilityConditions()
         discretization.getTs()[1] - discretization.getTs()[0], // dt
         discretization.getXs()[1] - discretization.getXs()[0], // dx
         params.nu,
-        (params.T) / (params.nt * 10 - 1),     // dt_ode
-        (params.L0 / 2) / (params.nx_pde - 1), // dx_pde
-        (params.T) / (params.nt_pde - 1)       // dt_pde
+        (params.T) / (params.nt * 10 - 1), // dt_ode
+        (params.L0) / (params.nx_pde - 1), // dx_pde
+        (params.T) / (params.nt_pde - 1)   // dt_pde
       );
     }
   catch(const std::runtime_error &e)
@@ -108,8 +99,7 @@ MainSimulation::evaluateCarlemanNumber()
   try
     {
       double R = sim::utils::calculateCarlemanConvergenceNumber(
-        initialConditions.getF0(), initialConditions.getF1(),
-        initialConditions.getF2(), initialConditions.getU0s(),
+        F0, F1, F2, initialConditions.getU0s(),
         discretization.getTs()[1] - discretization.getTs()[0], // dt
         params.nt, params.nx, params.N_max);
       std::cout << "Carleman convergence number R: " << R << std::endl;
@@ -120,6 +110,28 @@ MainSimulation::evaluateCarlemanNumber()
                 << std::endl;
       throw; // Re-throw the exception to terminate the simulation
     }
+}
+
+Eigen::MatrixXd
+MainSimulation::convertToDenseEigen(const std::vector<std::vector<double>> &vec)
+{
+  // Get the dimensions of the input vector
+  int rows = vec.size();
+  int cols = vec[0].size();
+
+  // Create an Eigen matrix with the same dimensions
+  Eigen::MatrixXd eigenMatrix(rows, cols);
+
+  // Copy the data from the 2D vector to the Eigen matrix
+  for(int i = 0; i < rows; ++i)
+    {
+      for(int j = 0; j < cols; ++j)
+        {
+          eigenMatrix(i, j) = vec[i][j];
+        }
+    }
+
+  return eigenMatrix;
 }
 
 } // namespace sim

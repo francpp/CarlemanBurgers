@@ -12,7 +12,7 @@
 #include "solvers/PDESolver.hpp"
 #include "utils/CarlemanUtils.hpp"
 #include "utils/StabilityChecks.hpp"
-#include <Eigen/Sparse>
+#include <Eigen/Dense>
 
 namespace sim
 {
@@ -29,14 +29,14 @@ class MainSimulation
 
   error_analysis::ErrorAnalysis errorAnalysis;
 
-  Eigen::SparseMatrix<double> F0; // Sparse matrix for F0
+  Eigen::MatrixXd             F0; // Dense matrix for F0
   Eigen::MatrixXd             F1; // Dense matrix for F1
   Eigen::MatrixXd             F2; // Dense matrix for F2
 
   void checkStabilityConditions(); // Method to check CFL conditions
   void evaluateCarlemanNumber();   // Method to evaluate Carleman number
-  Eigen::SparseMatrix<double>
-  prepareCarlemanMatrix(); // Method to prepare Carleman matrix
+  Eigen::MatrixXd prepareCarlemanMatrix(); // Method to prepare Carleman matrix
+  Eigen::MatrixXd convertToDenseEigen(const std::vector<std::vector<double>> &);
 
 public:
   MainSimulation(params::SimulationParameters &params);
