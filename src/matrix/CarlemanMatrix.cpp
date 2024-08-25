@@ -44,45 +44,55 @@ namespace matrix
     Eigen::MatrixXd firstColumn =
       F0.row(0).transpose(); // Convert the first row of F0 into a column vector
     Fs << firstColumn, F1, F2;
-
     // TODO
-    /*for (int i = 1; i <= N_max; ++i)
-    {
+    for(int i = 1; i <= N_max; ++i)
+      {
         for (int j = 0; j <= std::min(ode_deg, N_max - i + 1); ++j)
         {
             if (i == 1 && j == 0)
                 continue;
 
-            int a0 = 1 + (std::pow(nx, i) - nx) / (nx - 1) - 1;  // Adjusted for
-    zero-based indexing int a1 = a0 + std::pow(nx, i) - 1; int b0 = 1 +
-    (std::pow(nx, j + i - 1) - nx) / (nx - 1) - 1;  // Adjusted for zero-based
-    indexing int b1 = b0 + std::pow(nx, j + i - 1) - 1;
+            int a0 = 1 + (std::pow(nx, i) - nx) / (nx - 1) -
+                     1; // Adjusted for zero-based indexing
+            int a1 = a0 + std::pow(nx, i) - 1;
+            int b0 = 1 + (std::pow(nx, j + i - 1) - nx) / (nx - 1) -
+                     1; // Adjusted for zero-based indexing
+            int b1 = b0 + std::pow(nx, j + i - 1) - 1;
 
             // Initialize Aij using Eigen::MatrixXd
-            Eigen::MatrixXd Aij = Eigen::MatrixXd::Zero(std::pow(nx, i),
-    std::pow(nx, j + i - 1));
-
+            Eigen::MatrixXd Aij =
+              Eigen::MatrixXd::Zero(std::pow(nx, i), std::pow(nx, j + i - 1));
+            std::cout << "Aij size: " << Aij.rows() << " x " << Aij.cols()
+                      << std::endl;
             // Extract the relevant block from Fs
-            int f0 = 1 + (std::pow(nx, j) - nx) / (nx - 1) - 1;  // Adjusted for
-    zero-based indexing int f1 = f0 + nx - 1;  // fj and fj+1 difference is the
-    number of rows of Fj Eigen::MatrixXd Fj = Fs.block(0, f0, nx, f1 - f0 + 1);
-
+            int f0 = 1 + (std::pow(nx, j) - nx) / (nx - 1) +
+                     1; // Adjusted for zero-based indexing
+            int f1 = f0 + std::pow(nx, j) -
+                     1; // fj and fj+1 difference is the number of rows of Fj
+            std::cout << "f0: " << f0 << std::endl;
+            std::cout << "f1: " << f1 << std::endl;
+            Eigen::MatrixXd Fj = Fs.block(0, f0 - 1, Fs.rows(), f1 - f0 + 1);
+            std::cout << "Fj size: " << Fj.rows() << " x " << Fj.cols()
+                      << std::endl;
             for (int p = 1; p <= i; ++p)
             {
                 // Calculate Kronecker products using Eigen matrices
-                Eigen::MatrixXd Ia = kronp(Eigen::MatrixXd::Identity(nx, nx), p
-    - 1); Eigen::MatrixXd Ib = kronp(Eigen::MatrixXd::Identity(nx, nx), i - p);
+                Eigen::MatrixXd Ia =
+                  kronp(Eigen::MatrixXd::Identity(nx, nx), p - 1);
+                Eigen::MatrixXd Ib =
+                  kronp(Eigen::MatrixXd::Identity(nx, nx), i - p);
 
                 Eigen::MatrixXd kron_product = kron(Ia, Fj);
-                Aij += kron(kron_product, Ib);  // Updated based on the MATLAB
-    code's structure
+                Aij += kron(kron_product,
+                            Ib); // Updated based on the MATLAB code's structure
             }
 
             // Insert the Aij block into the appropriate place in the full
-    matrix A A.block(a0, b0, Aij.rows(), Aij.cols()) = Aij;  // Direct block
-    assignment
+            // matrix A
+            A.block(a0, b0, Aij.rows(), Aij.cols()) =
+              Aij; // Direct block assignment
         }
-    }*/
+      }
 
     return A;
   }
