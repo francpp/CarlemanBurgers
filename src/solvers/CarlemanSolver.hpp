@@ -21,7 +21,7 @@ namespace solvers
       const discretization::Discretization        &discretization,
       const initial_conditions::InitialConditions &initialConditions);
 
-    void solveCarlemanSystem();
+    void solveCarlemanSystem(Eigen::MatrixXd &);
 
   private:
     const params::SimulationParameters          &params;

@@ -14,8 +14,6 @@ namespace matrix
   calculateBlockSizes(int N_max, int nx)
   {
     std::vector<int> dNs(N_max);
-    std::cout << "N_max: " << N_max << std::endl;
-    std::cout << "nx: " << nx << std::endl;
     for(int N = 1; N <= N_max; ++N)
       {
         int size = static_cast<int>((std::pow(nx, N + 1) - nx) / (nx - 1));
@@ -62,18 +60,12 @@ namespace matrix
             // Initialize Aij using Eigen::MatrixXd
             Eigen::MatrixXd Aij =
               Eigen::MatrixXd::Zero(std::pow(nx, i), std::pow(nx, j + i - 1));
-            std::cout << "Aij size: " << Aij.rows() << " x " << Aij.cols()
-                      << std::endl;
             // Extract the relevant block from Fs
             int f0 = 1 + (std::pow(nx, j) - nx) / (nx - 1) +
                      1; // Adjusted for zero-based indexing
             int f1 = f0 + std::pow(nx, j) -
                      1; // fj and fj+1 difference is the number of rows of Fj
-            std::cout << "f0: " << f0 << std::endl;
-            std::cout << "f1: " << f1 << std::endl;
             Eigen::MatrixXd Fj = Fs.block(0, f0 - 1, Fs.rows(), f1 - f0 + 1);
-            std::cout << "Fj size: " << Fj.rows() << " x " << Fj.cols()
-                      << std::endl;
             for (int p = 1; p <= i; ++p)
             {
                 // Calculate Kronecker products using Eigen matrices

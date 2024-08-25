@@ -82,7 +82,7 @@ MainSimulation::run()
             << carlemanMatrix.block(0, 0, 10, 10) << std::endl;
 
   // Solve the Carleman system
-  carlemanSolver.solveCarlemanSystem();
+  carlemanSolver.solveCarlemanSystem(carlemanMatrix);
 
   // Proceed with the rest of your simulation process...
 }
