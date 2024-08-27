@@ -14,9 +14,7 @@ MainSimulation::MainSimulation(params::SimulationParameters &params)
     pdeSolver(params, discretization, initialConditions),
     carlemanSolver(params, discretization, initialConditions),
     errorAnalysis(eulerSolver, ode45Solver, pdeSolver, carlemanSolver)
-{
-  // Constructor implementation
-}
+{}
 
 void
 MainSimulation::initialize()
@@ -54,45 +52,32 @@ MainSimulation::run()
   F1 = convertToDenseEigen(initialConditions.getF1());
   F2 = convertToDenseEigen(initialConditions.getF2());
 
-  /*std::cout << "F0: " << F0 << std::endl;
-  std::cout << "F1: " << F1 << std::endl;
-  std::cout << "F2: " << F2 << std::endl;*/
-
-  Eigen::EigenSolver<Eigen::MatrixXd> solver(F1);
-  Eigen::VectorXcd                    eigenvalues = solver.eigenvalues();
-
-  std::cout << "The eigenvalues of F1 are:\n" << eigenvalues << std::endl;
   evaluateCarlemanNumber();
 
   // Prepare the Carleman matrix
   Eigen::MatrixXd carlemanMatrix = prepareCarlemanMatrix();
-  // print the size
-  std::cout << "Carleman matrix size is: " << carlemanMatrix.rows() << " x "
-            << carlemanMatrix.cols() << std::endl;
-  // print the sum, the mean, and the max of the matrix
-  std::cout << "Sum of the Carleman matrix: " << carlemanMatrix.sum()
-            << std::endl;
-  std::cout << "Mean of the Carleman matrix: " << carlemanMatrix.mean()
-            << std::endl;
-  std::cout << "Max of the Carleman matrix: " << carlemanMatrix.maxCoeff()
-            << std::endl;
-
-  // print the first 10 rows and columns of the matrix
-  std::cout << "First 10 rows and columns of the Carleman matrix:\n"
-            << carlemanMatrix.block(0, 0, 10, 10) << std::endl;
 
   // Solve the Carleman system
   carlemanSolver.solveCarlemanSystem(carlemanMatrix);
+
   // Solve the other systems
   eulerSolver.solveEuler(F0, F1, F2);
   ode45Solver.solveODE45(F0, F1, F2);
+  pdeSolver.solvePDE(F0);
 
+  std::vector<Eigen::MatrixXd> us_c_N = carlemanSolver.getUsCN();
   Eigen::MatrixXd us_e = eulerSolver.getUsE();
   Eigen::MatrixXd us_d = ode45Solver.getUsD();
+  Eigen::MatrixXd              us_pde = pdeSolver.getUsPDE();
 
+  // cout us_c_N
+  for(int i = 0; i < us_c_N.size(); i++)
+    {
+      std::cout << "us_c_N[" << i << "]:\n" << us_c_N[i] << std::endl;
+    }
   std::cout << us_e << std::endl;
   std::cout << us_d << std::endl;
-  // pdeSolver.solvePDE(F0);
+  std::cout << us_pde << std::endl;
 }
 
 void
