@@ -1,6 +1,7 @@
 #ifndef CARLEMAN_SOLVER_HPP
 #define CARLEMAN_SOLVER_HPP
 
+#include "Solver.hpp"
 #include "discretization/Discretization.hpp"
 #include "initial_conditions/InitialConditions.hpp"
 #include "params/SimulationParameters.hpp"
@@ -13,7 +14,7 @@ namespace sim
 namespace solvers
 {
 
-  class CarlemanSolver
+  class CarlemanSolver : public Solver
   {
   public:
     CarlemanSolver(
@@ -21,9 +22,8 @@ namespace solvers
       const discretization::Discretization        &discretization,
       const initial_conditions::InitialConditions &initialConditions);
 
-    void
-    solveCarlemanSystem(Eigen::MatrixXd &F0, Eigen::MatrixXd &F1,
-                        Eigen::MatrixXd &F2); // Method to solve Carleman system
+    void solve(Eigen::MatrixXd &F0, Eigen::MatrixXd &F1,
+               Eigen::MatrixXd &F2) override;
 
     const std::vector<Eigen::MatrixXd> &getUsCN() const;
 
@@ -31,9 +31,10 @@ namespace solvers
     const params::SimulationParameters          &params;
     const discretization::Discretization        &discretization;
     const initial_conditions::InitialConditions &initialConditions;
-    Eigen::MatrixXd                              prepareCarlemanMatrix(
-                                   Eigen::MatrixXd &F0, Eigen::MatrixXd &F1,
-                                   Eigen::MatrixXd &F2); // Method to prepare Carleman matrix
+
+    Eigen::MatrixXd prepareCarlemanMatrix(Eigen::MatrixXd &F0,
+                                          Eigen::MatrixXd &F1,
+                                          Eigen::MatrixXd &F2);
 
     std::vector<Eigen::MatrixXd> us_c_N; // Member to hold the solution matrices
   };

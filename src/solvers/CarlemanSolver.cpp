@@ -1,7 +1,6 @@
 #include "CarlemanSolver.hpp"
 #include "matrix/CarlemanMatrix.hpp"
 #include "matrix/kronp.hpp"
-#include <fstream>
 #include <iostream>
 #include <vector>
 
@@ -9,13 +8,13 @@ namespace sim
 {
 namespace solvers
 {
+
   CarlemanSolver::CarlemanSolver(
     const params::SimulationParameters          &params,
     const discretization::Discretization        &discretization,
     const initial_conditions::InitialConditions &initialConditions)
     : params(params), discretization(discretization),
-      initialConditions(initialConditions),
-      us_c_N(params.N_max) // Initialize us_c_N with N_max matrices
+      initialConditions(initialConditions), us_c_N(params.N_max)
   {}
 
   Eigen::MatrixXd
@@ -23,20 +22,20 @@ namespace solvers
                                         Eigen::MatrixXd &F1,
                                         Eigen::MatrixXd &F2)
   {
-    Eigen::MatrixXd carlemanMatrix = matrix::assembleCarlemanMatrix(
-      params.N_max, params.nx, params.ode_deg, F0, F1, F2);
-    return carlemanMatrix;
+    return matrix::assembleCarlemanMatrix(params.N_max, params.nx,
+                                          params.ode_deg, F0, F1, F2);
   }
 
   void
-  CarlemanSolver::solveCarlemanSystem(Eigen::MatrixXd &F0, Eigen::MatrixXd &F1,
-                                      Eigen::MatrixXd &F2)
+  CarlemanSolver::solve(Eigen::MatrixXd &F0, Eigen::MatrixXd &F1,
+                        Eigen::MatrixXd &F2)
   {
     Eigen::MatrixXd carleman_matrix = prepareCarlemanMatrix(F0, F1, F2);
     int             nx = params.nx;
     int             nt = params.nt;
     int             N_max = params.N_max;
-    double dt = discretization.getTs()[1] - discretization.getTs()[0];
+    double          dt = discretization.getTs()[1] - discretization.getTs()[0];
+
     Eigen::MatrixXd xs = Eigen::Map<const Eigen::MatrixXd>(
       discretization.getXs().data(), discretization.getXs().size(), 1);
     Eigen::MatrixXd ts = Eigen::Map<const Eigen::MatrixXd>(
@@ -60,8 +59,7 @@ namespace solvers
 
     for(int N = 1; N <= N_max; ++N)
       {
-        int dN = dNs[N - 1];
-
+        int             dN = dNs[N - 1];
         Eigen::MatrixXd A_N = carleman_matrix.block(0, 0, dN, dN);
         Eigen::MatrixXd b_N = Eigen::MatrixXd::Zero(dN, 1);
 
@@ -111,9 +109,7 @@ namespace solvers
                       matrix::kronp(Eigen::MatrixXd::Identity(nx, nx), p - 1);
                     Eigen::MatrixXd Ib =
                       matrix::kronp(Eigen::MatrixXd::Identity(nx, nx), i - p);
-                    Eigen::MatrixXd kron_result =
-                      matrix::kron(matrix::kron(Ia, Fj), Ib);
-                    Aij += kron_result.sparseView();
+                    Aij += matrix::kron(matrix::kron(Ia, Fj), Ib).sparseView();
                   }
 
                 A_N.block(a0, b0, a1 - a0 + 1, b1 - b0 + 1) = Aij;
@@ -123,7 +119,6 @@ namespace solvers
             ys[k + 1] = ys[k] + dt * (A_N * ys[k] + b_N);
           }
 
-        // Store the results for the current N into us_c_N[N-1]
         us_c_N[N - 1] = Eigen::MatrixXd(nt, nx);
         for(int k = 0; k < nt; ++k)
           {

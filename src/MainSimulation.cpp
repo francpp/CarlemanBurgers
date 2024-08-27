@@ -44,7 +44,7 @@ MainSimulation::run()
   evaluateCarlemanNumber();
 
   // Solve the Carleman system
-  carlemanSolver.solveCarlemanSystem(F0, F1, F2);
+  carlemanSolver.solve(F0, F1, F2);
 
   // Solve the other systems
   eulerSolver.solve(F0, F1, F2);
