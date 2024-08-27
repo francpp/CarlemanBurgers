@@ -84,7 +84,10 @@ MainSimulation::run()
   // Solve the Carleman system
   carlemanSolver.solveCarlemanSystem(carlemanMatrix);
 
-  // Proceed with the rest of your simulation process...
+  // Solve the other systems
+  eulerSolver.solveEuler(F0, F1, F2);
+  // ode45Solver.solve();
+  // pdeSolver.solve();
 }
 
 void
