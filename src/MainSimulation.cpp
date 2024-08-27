@@ -13,7 +13,7 @@ MainSimulation::MainSimulation(params::SimulationParameters &params)
     ode45Solver(params, discretization, initialConditions),
     pdeSolver(params, discretization, initialConditions),
     carlemanSolver(params, discretization, initialConditions),
-    errorAnalysis(eulerSolver, ode45Solver, pdeSolver, carlemanSolver)
+    errorAnalysis(eulerSolver, ode45Solver, pdeSolver, carlemanSolver, params)
 {}
 
 void
@@ -70,14 +70,21 @@ MainSimulation::run()
   Eigen::MatrixXd us_d = ode45Solver.getUsD();
   Eigen::MatrixXd              us_pde = pdeSolver.getUsPDE();
 
-  // cout us_c_N
-  for(int i = 0; i < us_c_N.size(); i++)
-    {
-      std::cout << "us_c_N[" << i << "]:\n" << us_c_N[i] << std::endl;
-    }
-  std::cout << us_e << std::endl;
-  std::cout << us_d << std::endl;
-  std::cout << us_pde << std::endl;
+  errorAnalysis.computeErrors();
+  std::cout << "\nCD error: \n" << errorAnalysis.getEpsCDError() << std::endl;
+  std::cout << "\nRelative CD error: \n"
+            << errorAnalysis.getEpsRelCDError() << std::endl;
+  std::cout << "\nCPDE error: \n"
+            << errorAnalysis.getEpsCPDEError() << std::endl;
+  std::cout << "\nRelative CPDE error: \n"
+            << errorAnalysis.getEpsRelCPDEError() << std::endl;
+  std::cout << "\nDPDE error: \n"
+            << errorAnalysis.getEpsDPDEError() << std::endl;
+  std::cout << "\nRelative DPDE error: \n"
+            << errorAnalysis.getEpsRelDPDEError() << std::endl;
+  std::cout << "\nDE error: \n" << errorAnalysis.getEpsDEError() << std::endl;
+  std::cout << "\nDE error: \n"
+            << errorAnalysis.getEpsRelDEError() << std::endl;
 }
 
 void
