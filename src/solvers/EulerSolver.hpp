@@ -5,32 +5,27 @@
 #include "discretization/Discretization.hpp"
 #include "initial_conditions/InitialConditions.hpp"
 #include "params/SimulationParameters.hpp"
-#include <Eigen/Dense>
-#include <vector>
 
 namespace sim::solvers
 {
-class EulerSolver
+class EulerSolver : public Solver
 {
 public:
   EulerSolver(const params::SimulationParameters          &params,
               const discretization::Discretization        &discretization,
-              const initial_conditions::InitialConditions &initiaConditions);
+              const initial_conditions::InitialConditions &initialConditions);
 
-  void solveEuler(Eigen::MatrixXd &F0, Eigen::MatrixXd &F1,
-                  Eigen::MatrixXd &F2);
+  void solve(Eigen::MatrixXd &F0, Eigen::MatrixXd &F1,
+             Eigen::MatrixXd &F2) override;
 
-  const Eigen::MatrixXd &getUsE() const; // Method to access the solution matrix
+  const Eigen::MatrixXd &getUsE() const;
 
 private:
   const params::SimulationParameters          &params;
   const discretization::Discretization        &discretization;
   const initial_conditions::InitialConditions &initialConditions;
 
-  Eigen::MatrixXd us_e; // Member to hold the solution matrix
-
-  Eigen::VectorXd interp1(const std::vector<double> &ts,
-                          const Eigen::MatrixXd &F0, double t) const;
+  Eigen::MatrixXd us_e;
 };
 } // namespace sim::solvers
 

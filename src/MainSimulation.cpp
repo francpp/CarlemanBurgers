@@ -61,9 +61,9 @@ MainSimulation::run()
   carlemanSolver.solveCarlemanSystem(carlemanMatrix);
 
   // Solve the other systems
-  eulerSolver.solveEuler(F0, F1, F2);
-  ode45Solver.solveODE45(F0, F1, F2);
-  pdeSolver.solvePDE(F0);
+  eulerSolver.solve(F0, F1, F2);
+  ode45Solver.solve(F0, F1, F2);
+  pdeSolver.solve(F0, F1, F2);
 
   std::vector<Eigen::MatrixXd> us_c_N = carlemanSolver.getUsCN();
   Eigen::MatrixXd us_e = eulerSolver.getUsE();
