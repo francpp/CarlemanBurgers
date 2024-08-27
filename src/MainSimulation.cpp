@@ -39,7 +39,6 @@ MainSimulation::run()
   std::cout << "Running simulation..." << std::endl;
   std::cout << params << std::endl;
   std::cout << discretization << std::endl;
-  // std::cout << initialConditions << std::endl;
 
   evaluateCarlemanNumber();
 
@@ -50,11 +49,6 @@ MainSimulation::run()
   eulerSolver.solve(F0, F1, F2);
   ode45Solver.solve(F0, F1, F2);
   pdeSolver.solve(F0, F1, F2);
-
-  std::vector<Eigen::MatrixXd> us_c_N = carlemanSolver.getUsCN();
-  Eigen::MatrixXd us_e = eulerSolver.getUsE();
-  Eigen::MatrixXd us_d = ode45Solver.getUsD();
-  Eigen::MatrixXd              us_pde = pdeSolver.getUsPDE();
 
   errorAnalysis.computeErrors();
   std::cout << "\nCD error: \n" << errorAnalysis.getEpsCDError() << std::endl;
