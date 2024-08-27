@@ -41,6 +41,14 @@ Discretization::createDiscretization()
     xs_pde[i] = x0 + i * dx_pde;
   for(int i = 0; i < nt_pde; ++i)
     ts_pde[i] = t0 + i * dt_pde;
+
+  // Discretization for ODE
+  int nt_ode = nt * 10; // Make it more accurate than the PDE solution
+  dt_ode = (t1 - t0) / (nt_ode - 1);
+  ts_ode.resize(nt_ode);
+
+  for(int i = 0; i < nt_ode; ++i)
+    ts_ode[i] = t0 + i * dt_ode;
 }
 
 // Overload for printing Discretization parameters
@@ -76,6 +84,15 @@ operator<<(std::ostream &out, const Discretization &d)
   out << "ts_pde: ";
   for(int i = 0; i < std::min(10, static_cast<int>(d.getTsPde().size())); ++i)
     out << d.getTsPde()[i] << " ";
+  out << std::endl;
+
+  std::cout << "\n";
+
+  out << "nt_ode: " << d.getTsOde().size() << std::endl;
+
+  out << "ts_ode: ";
+  for(int i = 0; i < std::min(10, static_cast<int>(d.getTsOde().size())); ++i)
+    out << d.getTsOde()[i] << " ";
   out << std::endl;
 
   return out;

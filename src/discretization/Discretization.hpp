@@ -35,6 +35,11 @@ public:
   {
     return ts_pde;
   }
+  const std::vector<double> &
+  getTsOde() const
+  {
+    return ts_ode;
+  }
 
   // Getter for SimulationParameters
   const sim::params::SimulationParameters &
@@ -45,9 +50,9 @@ public:
 
 private:
   const sim::params::SimulationParameters &params;
-  std::vector<double>                      xs, ts, xs_pde, ts_pde;
+  std::vector<double>                      xs, ts, xs_pde, ts_pde, ts_ode;
 
-  double dx, dt, dx_pde, dt_pde;
+  double dx, dt, dx_pde, dt_pde, dt_ode;
 };
 
 std::ostream &operator<<(std::ostream &, const Discretization &);
