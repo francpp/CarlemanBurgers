@@ -86,7 +86,7 @@ MainSimulation::run()
 
   // Solve the other systems
   eulerSolver.solveEuler(F0, F1, F2);
-  // ode45Solver.solve();
+  ode45Solver.solveODE45(F0, F1, F2);
   // pdeSolver.solve();
 }
 
