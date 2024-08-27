@@ -11,6 +11,7 @@
 #include "solvers/ODE45Solver.hpp"
 #include "solvers/PDESolver.hpp"
 #include "utils/CarlemanUtils.hpp"
+#include "utils/MatrixFormat.hpp"
 #include "utils/StabilityChecks.hpp"
 #include <Eigen/Dense>
 
@@ -35,7 +36,6 @@ class MainSimulation
 
   void checkStabilityConditions(); // Method to check CFL conditions
   void evaluateCarlemanNumber();   // Method to evaluate Carleman number
-  Eigen::MatrixXd convertToDenseEigen(const std::vector<std::vector<double>> &);
 
 public:
   MainSimulation(params::SimulationParameters &params);
