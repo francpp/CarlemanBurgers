@@ -9,13 +9,13 @@ namespace sim
 {
 namespace solvers
 {
-  // need to pass also the matrice A and dNs
   CarlemanSolver::CarlemanSolver(
     const params::SimulationParameters          &params,
     const discretization::Discretization        &discretization,
     const initial_conditions::InitialConditions &initialConditions)
     : params(params), discretization(discretization),
-      initialConditions(initialConditions)
+      initialConditions(initialConditions),
+      us_c_N(params.N_max) // Initialize us_c_N with N_max matrices
   {}
 
   void
@@ -33,39 +33,27 @@ namespace solvers
       initialConditions.getU0s().data(), initialConditions.getU0s().size(), 1);
     std::vector<int> dNs = matrix::calculateBlockSizes(N_max, nx);
 
-    // Use U0 and L0 from params
     double U0 = params.U0;
     double L0 = params.L0;
 
-    // Define F0_fun as a lambda function using U0 and L0 from params
     std::function<Eigen::MatrixXd(double, const Eigen::MatrixXd &)> F0_fun =
       [U0, L0](double t, const Eigen::MatrixXd &xs) {
-        // Compute the Gaussian component
         Eigen::MatrixXd gaussian =
           (-((xs.array() - L0 / 4).square()) / (2 * std::pow(L0 / 32, 2)))
             .exp();
-        // Compute the cosine component
-        double cos_component = std::cos(2 * M_PI * t);
-
+        double          cos_component = std::cos(2 * M_PI * t);
         Eigen::MatrixXd result = U0 * gaussian * cos_component;
-
-        // Return the product of U0, the Gaussian, and the cosine component
         return result;
       };
-    // Initialize ys_c_N as a vector of vectors of Eigen::MatrixXd to simulate a
-    // 3D array
-    std::vector<std::vector<Eigen::MatrixXd>> ys_c_N(
-      N_max, std::vector<Eigen::MatrixXd>(nt));
+
     for(int N = 1; N <= N_max; ++N)
       {
-        int dN = dNs[N - 1]; // Adjusted for 0-based indexing
+        int dN = dNs[N - 1];
 
         Eigen::MatrixXd A_N = A.block(0, 0, dN, dN);
         Eigen::MatrixXd b_N = Eigen::MatrixXd::Zero(dN, 1);
 
-        // Initialize b_N for the first time step
         b_N.block(0, 0, nx, 1) = F0_fun(ts(0), xs);
-        // Construct y0s
         Eigen::MatrixXd y0s = Eigen::MatrixXd::Zero(nt, dN);
 
         for(int i = 1; i <= N; ++i)
@@ -85,7 +73,6 @@ namespace solvers
 
         std::cout << "Solving Carleman N=" << N << std::endl;
 
-        // Initialize ys for all time steps
         std::vector<Eigen::MatrixXd> ys(nt);
         ys[0] = y0s;
 
@@ -93,8 +80,6 @@ namespace solvers
           {
             double current_t = ts(k);
 
-            // Rebuild the inhomogeneous part of the Carleman matrix per time
-            // step
             for(int i = 2; i <= N; ++i)
               {
                 int a0 =
@@ -126,49 +111,21 @@ namespace solvers
             ys[k + 1] = ys[k] + dt * (A_N * ys[k] + b_N);
           }
 
-        // Store results in ys_c_N
-
+        // Store the results for the current N into us_c_N[N-1]
+        us_c_N[N - 1] = Eigen::MatrixXd(nt, nx);
         for(int k = 0; k < nt; ++k)
           {
-            ys_c_N[N - 1][k] = ys[k].block(0, 0, dN, 1);
-          }
-      }
-
-    // Extract us_c_N
-
-    std::vector<std::vector<Eigen::MatrixXd>> us_c_N(
-      N_max, std::vector<Eigen::MatrixXd>(nt));
-    for(int N = 1; N <= N_max; ++N)
-      {
-        for(int k = 0; k < nt; ++k)
-          {
-            us_c_N[N - 1][k] = ys_c_N[N - 1][k].block(0, 0, nx, 1);
+            us_c_N[N - 1].row(k) = ys[k].block(0, 0, nx, 1).transpose();
           }
       }
 
     std::cout << "Carleman system solved" << std::endl;
-    // cout size and first values
-    std::cout << "us_c_N size: " << us_c_N.size() << std::endl;
-    std::cout << "us_c_N[0] size: " << us_c_N[0].size() << std::endl;
-    std::cout << "us_c_N[0][0] size: " << us_c_N[0][0].size() << std::endl;
-    std::cout << "us_c_N[0][0] first value: " << us_c_N[2][5] << std::endl;
+  }
 
-    // Open the file to write the data
-    std::ofstream outfile("output.txt");
-    if(!outfile.is_open())
-      {
-        std::cerr << "Error opening file!" << std::endl;
-      }
-
-    // Iterate over the vector and write the data
-    for(int i = 0; i < N_max; ++i)
-      {
-        for(int j = 0; j < nt; ++j)
-          {
-            outfile << "Matrix (" << i << ", " << j << "):\n";
-            outfile << us_c_N[i][j] << "\n\n";
-          }
-      }
+  const std::vector<Eigen::MatrixXd> &
+  CarlemanSolver::getUsCN() const
+  {
+    return us_c_N;
   }
 
 } // namespace solvers

@@ -23,14 +23,14 @@ namespace solvers
 
     void solveCarlemanSystem(Eigen::MatrixXd &);
 
+    const std::vector<Eigen::MatrixXd> &getUsCN() const;
+
   private:
     const params::SimulationParameters          &params;
     const discretization::Discretization        &discretization;
     const initial_conditions::InitialConditions &initialConditions;
 
-    std::vector<Eigen::MatrixXd> ys_c_N; // Solution for each truncation level
-    Eigen::MatrixXd              A;      // Carleman matrix
-    Eigen::VectorXd             b_N;    // Inhomogeneous term
+    std::vector<Eigen::MatrixXd> us_c_N; // Member to hold the solution matrices
   };
 
 } // namespace solvers

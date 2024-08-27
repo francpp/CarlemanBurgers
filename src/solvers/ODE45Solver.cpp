@@ -5,6 +5,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <vector>
+
 namespace sim::solvers
 {
 
@@ -13,7 +14,9 @@ ODE45Solver::ODE45Solver(
   const sim::discretization::Discretization        &discretization,
   const sim::initial_conditions::InitialConditions &initialConditions)
   : params(params), discretization(discretization),
-    initialConditions(initialConditions)
+    initialConditions(initialConditions),
+    us_d(
+      Eigen::MatrixXd::Zero(params.nt, params.nx)) // Initialize us_d with zeros
 {}
 
 void
@@ -36,7 +39,7 @@ ODE45Solver::solveODE45(Eigen::MatrixXd &F0, Eigen::MatrixXd &F1,
 
   std::cout << "Solving with Runge-Kutta method (RK45)" << std::endl;
 
-  // Initialize the solution matrix
+  // Initialize the solution matrix for the ODE solver
   Eigen::MatrixXd us_ode = Eigen::MatrixXd::Zero(10 * params.nt, params.nx);
   Eigen::MatrixXd u0s = Eigen::Map<const Eigen::MatrixXd>(
     initialConditions.getU0s().data(), initialConditions.getU0s().size(), 1);
@@ -46,6 +49,7 @@ ODE45Solver::solveODE45(Eigen::MatrixXd &F0, Eigen::MatrixXd &F1,
 
   std::vector<double> ts_ode = discretization.getTsOde();
   double              t = ts_ode[0];
+
   // Time stepping loop using a simple Runge-Kutta 4th order (RK4)
   for(int i = 1; i < ts_ode.size(); ++i)
     {
@@ -64,7 +68,8 @@ ODE45Solver::solveODE45(Eigen::MatrixXd &F0, Eigen::MatrixXd &F1,
     }
 
   // At this point, us_ode contains the solution for each time step
-  Eigen::MatrixXd     us_d = Eigen::MatrixXd::Zero(params.nt, params.nx);
+
+  // Interpolating the ODE solution to the original time grid
   std::vector<double> ts = discretization.getTs();
 
   for(int i = 0; i < params.nt; ++i)
@@ -111,4 +116,11 @@ ODE45Solver::interp1(const std::vector<double> &ts, const Eigen::MatrixXd &F0,
 
   return (1 - ratio) * F0.row(i) + ratio * F0.row(i + 1);
 }
+
+const Eigen::MatrixXd &
+ODE45Solver::getUsD() const
+{
+  return us_d;
+}
+
 } // namespace sim::solvers

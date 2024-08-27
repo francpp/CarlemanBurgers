@@ -5,6 +5,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <vector>
+
 namespace sim::solvers
 {
 
@@ -13,7 +14,9 @@ EulerSolver::EulerSolver(
   const sim::discretization::Discretization        &discretization,
   const sim::initial_conditions::InitialConditions &initialConditions)
   : params(params), discretization(discretization),
-    initialConditions(initialConditions)
+    initialConditions(initialConditions),
+    us_e(
+      Eigen::MatrixXd::Zero(params.nt, params.nx)) // Initialize us_e with zeros
 {}
 
 void
@@ -21,6 +24,7 @@ EulerSolver::solveEuler(Eigen::MatrixXd &F0, Eigen::MatrixXd &F1,
                         Eigen::MatrixXd &F2)
 {
   double dt = discretization.getTs()[1] - discretization.getTs()[0];
+
   // Interpolator for F0
   auto F0_interp = [&](double t) {
     Eigen::VectorXd F0_interpolated = interp1(discretization.getTs(), F0, t);
@@ -35,10 +39,9 @@ EulerSolver::solveEuler(Eigen::MatrixXd &F0, Eigen::MatrixXd &F1,
 
   std::cout << "Solving direct Euler" << std::endl;
 
-  // Initialize the solution matrix
-  Eigen::MatrixXd us_e = Eigen::MatrixXd::Zero(params.nt, params.nx);
   Eigen::MatrixXd u0s = Eigen::Map<const Eigen::MatrixXd>(
     initialConditions.getU0s().data(), initialConditions.getU0s().size(), 1);
+
   // Set the initial condition
   us_e.row(0) = u0s.transpose();
   std::vector<double> ts = discretization.getTs();
@@ -61,20 +64,17 @@ EulerSolver::interp1(const std::vector<double> &ts, const Eigen::MatrixXd &F0,
 {
   int n = ts.size();
 
-  // Check if t is outside the range of ts
   if(t < ts.front() || t > ts.back())
     {
       throw std::out_of_range("t is out of bounds");
     }
 
-  // Find the interval [t_i, t_i+1] such that t_i <= t < t_i+1
   int i = 0;
   while(i < n - 1 && t >= ts[i + 1])
     {
       ++i;
     }
 
-  // Handle edge cases where t is exactly at the boundary
   if(t == ts[i])
     {
       return F0.row(i);
@@ -84,11 +84,17 @@ EulerSolver::interp1(const std::vector<double> &ts, const Eigen::MatrixXd &F0,
       return F0.row(i + 1);
     }
 
-  // Linear interpolation
   double t1 = ts[i];
   double t2 = ts[i + 1];
   double ratio = (t - t1) / (t2 - t1);
 
   return (1 - ratio) * F0.row(i) + ratio * F0.row(i + 1);
 }
+
+const Eigen::MatrixXd &
+EulerSolver::getUsE() const
+{
+  return us_e;
+}
+
 } // namespace sim::solvers
