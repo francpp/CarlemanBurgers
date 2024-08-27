@@ -21,7 +21,9 @@ namespace solvers
       const discretization::Discretization        &discretization,
       const initial_conditions::InitialConditions &initialConditions);
 
-    void solveCarlemanSystem(Eigen::MatrixXd &);
+    void
+    solveCarlemanSystem(Eigen::MatrixXd &F0, Eigen::MatrixXd &F1,
+                        Eigen::MatrixXd &F2); // Method to solve Carleman system
 
     const std::vector<Eigen::MatrixXd> &getUsCN() const;
 
@@ -29,6 +31,9 @@ namespace solvers
     const params::SimulationParameters          &params;
     const discretization::Discretization        &discretization;
     const initial_conditions::InitialConditions &initialConditions;
+    Eigen::MatrixXd                              prepareCarlemanMatrix(
+                                   Eigen::MatrixXd &F0, Eigen::MatrixXd &F1,
+                                   Eigen::MatrixXd &F2); // Method to prepare Carleman matrix
 
     std::vector<Eigen::MatrixXd> us_c_N; // Member to hold the solution matrices
   };

@@ -31,15 +31,6 @@ MainSimulation::initialize()
                                                         // boundary conditions
 }
 
-Eigen::MatrixXd
-MainSimulation::prepareCarlemanMatrix()
-{
-  std::vector<int> dNs = matrix::calculateBlockSizes(params.N_max, params.nx);
-  Eigen::MatrixXd  carlemanMatrix = matrix::assembleCarlemanMatrix(
-     dNs, params.N_max, params.nx, params.ode_deg, F0, F1, F2);
-  return carlemanMatrix;
-}
-
 void
 MainSimulation::run()
 {
@@ -54,11 +45,8 @@ MainSimulation::run()
 
   evaluateCarlemanNumber();
 
-  // Prepare the Carleman matrix
-  Eigen::MatrixXd carlemanMatrix = prepareCarlemanMatrix();
-
   // Solve the Carleman system
-  carlemanSolver.solveCarlemanSystem(carlemanMatrix);
+  carlemanSolver.solveCarlemanSystem(F0, F1, F2);
 
   // Solve the other systems
   eulerSolver.solve(F0, F1, F2);

@@ -23,16 +23,11 @@ namespace matrix
   }
 
   Eigen::MatrixXd
-  initializeCarlemanMatrix(int size)
+  assembleCarlemanMatrix(int N_max, int nx, int ode_deg,
+                         const Eigen::MatrixXd &F0, const Eigen::MatrixXd &F1,
+                         const Eigen::MatrixXd &F2)
   {
-    return Eigen::MatrixXd(size, size);
-  }
-
-  Eigen::MatrixXd
-  assembleCarlemanMatrix(const std::vector<int> &dNs, int N_max, int nx,
-                         int ode_deg, const Eigen::MatrixXd &F0,
-                         const Eigen::MatrixXd &F1, const Eigen::MatrixXd &F2)
-  {
+    std::vector<int> dNs = calculateBlockSizes(N_max, nx);
     int             total_size = dNs.back();
     Eigen::MatrixXd A = Eigen::MatrixXd::Zero(total_size, total_size);
 

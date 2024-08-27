@@ -18,9 +18,21 @@ namespace solvers
       us_c_N(params.N_max) // Initialize us_c_N with N_max matrices
   {}
 
-  void
-  CarlemanSolver::solveCarlemanSystem(Eigen::MatrixXd &A)
+  Eigen::MatrixXd
+  CarlemanSolver::prepareCarlemanMatrix(Eigen::MatrixXd &F0,
+                                        Eigen::MatrixXd &F1,
+                                        Eigen::MatrixXd &F2)
   {
+    Eigen::MatrixXd carlemanMatrix = matrix::assembleCarlemanMatrix(
+      params.N_max, params.nx, params.ode_deg, F0, F1, F2);
+    return carlemanMatrix;
+  }
+
+  void
+  CarlemanSolver::solveCarlemanSystem(Eigen::MatrixXd &F0, Eigen::MatrixXd &F1,
+                                      Eigen::MatrixXd &F2)
+  {
+    Eigen::MatrixXd carleman_matrix = prepareCarlemanMatrix(F0, F1, F2);
     int             nx = params.nx;
     int             nt = params.nt;
     int             N_max = params.N_max;
@@ -50,7 +62,7 @@ namespace solvers
       {
         int dN = dNs[N - 1];
 
-        Eigen::MatrixXd A_N = A.block(0, 0, dN, dN);
+        Eigen::MatrixXd A_N = carleman_matrix.block(0, 0, dN, dN);
         Eigen::MatrixXd b_N = Eigen::MatrixXd::Zero(dN, 1);
 
         b_N.block(0, 0, nx, 1) = F0_fun(ts(0), xs);

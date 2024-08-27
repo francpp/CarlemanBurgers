@@ -9,16 +9,11 @@ namespace sim
 {
 namespace matrix
 {
-
   // Function to calculate matrix block sizes for the Carleman matrix
   std::vector<int> calculateBlockSizes(int N_max, int nx);
 
-  // Function to initialize the Carleman matrix as a sparse matrix
-  Eigen::MatrixXd initializeCarlemanMatrix(int size);
-
   // Function to assemble the Carleman matrix using the given parameters
-  Eigen::MatrixXd assembleCarlemanMatrix(const std::vector<int> &dNs, int N_max,
-                                         int nx, int ode_deg,
+  Eigen::MatrixXd assembleCarlemanMatrix(int N_max, int nx, int ode_deg,
                                          const Eigen::MatrixXd &F0,
                                          const Eigen::MatrixXd &F1,
                                          const Eigen::MatrixXd &F2);

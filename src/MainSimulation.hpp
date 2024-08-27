@@ -35,7 +35,6 @@ class MainSimulation
 
   void checkStabilityConditions(); // Method to check CFL conditions
   void evaluateCarlemanNumber();   // Method to evaluate Carleman number
-  Eigen::MatrixXd prepareCarlemanMatrix(); // Method to prepare Carleman matrix
   Eigen::MatrixXd convertToDenseEigen(const std::vector<std::vector<double>> &);
 
 public:
