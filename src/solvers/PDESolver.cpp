@@ -23,8 +23,6 @@ PDESolver::solve(Eigen::MatrixXd &F0, Eigen::MatrixXd &F1, Eigen::MatrixXd &F2)
 
   us_pde =
     Eigen::MatrixXd::Zero(nt_pde, nx_pde); // Placeholder solution process
-
-  std::cout << "PDE solved and interpolated" << std::endl;
 }
 
 const Eigen::MatrixXd &

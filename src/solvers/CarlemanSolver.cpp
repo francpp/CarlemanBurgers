@@ -118,8 +118,6 @@ namespace solvers
             us_c_N[N - 1].row(k) = ys[k].block(0, 0, nx, 1).transpose();
           }
       }
-
-    std::cout << "Carleman system solved" << std::endl;
   }
 
   const std::vector<Eigen::MatrixXd> &
