@@ -55,7 +55,6 @@ EulerSolver::solveEuler(Eigen::MatrixXd &F0, Eigen::MatrixXd &F1,
                .transpose()
                .row(0);
     }
-  std::cout << us_e << std::endl;
 }
 
 Eigen::VectorXd

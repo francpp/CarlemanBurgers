@@ -30,11 +30,7 @@ namespace utils
                                      int nt, int nx, int N_max)
   {
     // Calculate the eigenvalues of F1
-
-    std::cout << F1 << std::endl;
-
     Eigen::VectorXcd lambdas = eig(F1);
-    std::cout << "lambdas: " << lambdas << std::endl;
 
     // Remove zero eigenvalues
     Eigen::VectorXcd nonZeroLambdas;
@@ -49,14 +45,10 @@ namespace utils
 
     // Find the maximum eigenvalue
     double lambda = nonZeroLambdas.real().maxCoeff();
-    std::cout << "lambda: " << lambda << std::endl;
     // Calculate norms
     double f2 = spectralNorm(F2);
     double f1 = spectralNorm(F1);
     double f0 = 0.0;
-
-    std::cout << "f2: " << f2 << std::endl;
-    std::cout << "f1: " << f1 << std::endl;
 
     // Convert F0_vec to Eigen::MatrixXd for the norm calculation
 

@@ -21,13 +21,6 @@ namespace stability
 
     std::ostringstream error_message;
 
-    std::cout << "C1_e: " << C1_e << std::endl;
-    std::cout << "C2_e: " << C2_e << std::endl;
-    std::cout << "C1_ode: " << C1_ode << std::endl;
-    std::cout << "C2_ode: " << C2_ode << std::endl;
-    std::cout << "C1_pde: " << C1_pde << std::endl;
-    std::cout << "C2_pde: " << C2_pde << std::endl;
-
     if(C1_e > 1)
       {
         error_message << "C1_e = " << C1_e << " exceeds stability limit.\n";
