@@ -43,7 +43,7 @@ TODO
 
 To set up and run the solver, follow these steps:
 
-1. **Installation:** 
+1. **Installation (TODO):** 
    - Navigate to the project directory and run:
      ```bash
      make install
