@@ -1,40 +1,44 @@
 #include "kronp.hpp"
-#include <Eigen/Dense>
+#include "utils/MatrixFormat.hpp"
+#include <Eigen/Sparse>
 #include <iostream>
-
 namespace sim
 {
 namespace matrix
 {
 
   // Function to calculate the Kronecker product of two matrices using Eigen
-  Eigen::MatrixXd
-  kron(const Eigen::MatrixXd &A, const Eigen::MatrixXd &B)
+  // (Sparse version)
+  Eigen::SparseMatrix<double>
+  kron(const Eigen::SparseMatrix<double> &A,
+       const Eigen::SparseMatrix<double> &B)
   {
     const int aRows = A.rows();
     const int aCols = A.cols();
     const int bRows = B.rows();
     const int bCols = B.cols();
 
-    Eigen::MatrixXd C(aRows * bRows, aCols * bCols);
+    Eigen::SparseMatrix<double> C(aRows * bRows, aCols * bCols);
 
-    for(int i = 0; i < aRows; ++i)
+    for(int k = 0; k < A.outerSize(); ++k)
       {
-        for(int j = 0; j < aCols; ++j)
+        for(Eigen::SparseMatrix<double>::InnerIterator it(A, k); it; ++it)
           {
-            C.block(i * bRows, j * bCols, bRows, bCols) = A(i, j) * B;
+            matrixUtils::assignSparseBlock(C, it.value() * B, it.row() * bRows,
+                                           it.col() * bCols);
           }
       }
 
     return C;
   }
 
-  // Function to calculate the Kronecker power of a matrix using Eigen
-  Eigen::MatrixXd
-  kronp(const Eigen::MatrixXd &A, int k)
+  // Function to calculate the Kronecker power of a matrix using Eigen (Sparse
+  // version)
+  Eigen::SparseMatrix<double>
+  kronp(const Eigen::SparseMatrix<double> &A, int k)
   {
-    Eigen::MatrixXd B(1, 1);
-    B(0, 0) = 1.0;
+    Eigen::SparseMatrix<double> B(1, 1);
+    B.insert(0, 0) = 1.0;
 
     for(int i = 0; i < k; ++i)
       {
