@@ -26,5 +26,29 @@ namespace matrixUtils
     return eigenMatrix;
   }
 
+  void
+  assignSparseBlock(Eigen::SparseMatrix<double>       &A,
+                    const Eigen::SparseMatrix<double> &Aij, int a0, int b0)
+  {
+    // Ensure the matrix is in a writable state
+    A.reserve(A.nonZeros() + Aij.nonZeros());
+
+    for(int i = 0; i < Aij.outerSize(); ++i)
+      {
+        for(Eigen::SparseMatrix<double>::InnerIterator it(Aij, i); it; ++it)
+          {
+            int    row = a0 + it.row();
+            int    col = b0 + it.col();
+            double value = it.value();
+
+            // Overwrite the value in A with the new value from Aij
+            A.coeffRef(row, col) = value;
+          }
+      }
+
+    // Optionally compress the matrix after modifications
+    A.makeCompressed();
+  }
+
 } // namespace matrixUtils
 } // namespace sim
