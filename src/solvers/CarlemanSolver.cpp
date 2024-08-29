@@ -1,6 +1,8 @@
 #include "CarlemanSolver.hpp"
 #include "matrix/CarlemanMatrix.hpp"
 #include "matrix/kronp.hpp"
+#include "utils/MatrixFormat.hpp"
+#include <Eigen/Sparse>
 #include <iostream>
 #include <vector>
 
@@ -17,7 +19,7 @@ namespace solvers
       initialConditions(initialConditions), us_c_N(params.N_max)
   {}
 
-  Eigen::MatrixXd
+  Eigen::SparseMatrix<double>
   CarlemanSolver::prepareCarlemanMatrix(Eigen::MatrixXd &F0,
                                         Eigen::MatrixXd &F1,
                                         Eigen::MatrixXd &F2)
@@ -30,7 +32,8 @@ namespace solvers
   CarlemanSolver::solve(Eigen::MatrixXd &F0, Eigen::MatrixXd &F1,
                         Eigen::MatrixXd &F2)
   {
-    Eigen::MatrixXd carleman_matrix = prepareCarlemanMatrix(F0, F1, F2);
+    Eigen::SparseMatrix<double> carleman_matrix =
+      prepareCarlemanMatrix(F0, F1, F2);
     int             nx = params.nx;
     int             nt = params.nt;
     int             N_max = params.N_max;
@@ -42,6 +45,7 @@ namespace solvers
       discretization.getTs().data(), discretization.getTs().size(), 1);
     Eigen::MatrixXd u0s = Eigen::Map<const Eigen::MatrixXd>(
       initialConditions.getU0s().data(), initialConditions.getU0s().size(), 1);
+
     std::vector<int> dNs = matrix::calculateBlockSizes(N_max, nx);
 
     double U0 = params.U0;
@@ -57,18 +61,23 @@ namespace solvers
         return result;
       };
 
+    Eigen::SparseMatrix<double> I(nx, nx);
+    I.setIdentity();
+
     for(int N = 1; N <= N_max; ++N)
       {
         int             dN = dNs[N - 1];
-        Eigen::MatrixXd A_N = carleman_matrix.block(0, 0, dN, dN);
-        Eigen::MatrixXd b_N = Eigen::MatrixXd::Zero(dN, 1);
+        Eigen::SparseMatrix<double> A_N = carleman_matrix.block(0, 0, dN, dN);
+        Eigen::SparseMatrix<double> b_N(dN, 1);
 
-        b_N.block(0, 0, nx, 1) = F0_fun(ts(0), xs);
+        matrixUtils::assignSparseBlock(b_N, F0_fun(ts(0), xs).sparseView(), 0,
+                                       0);
         Eigen::MatrixXd y0s = Eigen::MatrixXd::Zero(nt, dN);
 
         for(int i = 1; i <= N; ++i)
           {
-            Eigen::MatrixXd kron_result = matrix::kronp(u0s, i);
+            Eigen::MatrixXd kron_result =
+              Eigen::MatrixXd(matrix::kronp(u0s.sparseView(), i));
             if(i == 1)
               {
                 y0s = kron_result;
@@ -102,20 +111,19 @@ namespace solvers
 
                 Eigen::SparseMatrix<double> Aij(std::pow(nx, i),
                                                 std::pow(nx, i - 1));
-                Eigen::MatrixXd             Fj = F0_fun(current_t, xs);
+                Eigen::SparseMatrix<double> Fj =
+                  F0_fun(current_t, xs).sparseView();
                 for(int p = 1; p <= i; ++p)
                   {
-                    Eigen::MatrixXd Ia =
-                      matrix::kronp(Eigen::MatrixXd::Identity(nx, nx), p - 1);
-                    Eigen::MatrixXd Ib =
-                      matrix::kronp(Eigen::MatrixXd::Identity(nx, nx), i - p);
-                    Aij += matrix::kron(matrix::kron(Ia, Fj), Ib).sparseView();
+                    Eigen::SparseMatrix<double> Ia = matrix::kronp(I, p - 1);
+                    Eigen::SparseMatrix<double> Ib = matrix::kronp(I, i - p);
+                    Aij += matrix::kron(matrix::kron(Ia, Fj), Ib);
                   }
-
-                A_N.block(a0, b0, a1 - a0 + 1, b1 - b0 + 1) = Aij;
+                matrixUtils::assignSparseBlock(A_N, Aij, a0, b0);
               }
 
-            b_N.block(0, 0, nx, 1) = F0_fun(current_t, xs);
+            matrixUtils::assignSparseBlock(
+              b_N, F0_fun(current_t, xs).sparseView(), 0, 0);
             ys[k + 1] = ys[k] + dt * (A_N * ys[k] + b_N);
           }
 

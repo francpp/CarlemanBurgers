@@ -32,9 +32,9 @@ namespace solvers
     const discretization::Discretization        &discretization;
     const initial_conditions::InitialConditions &initialConditions;
 
-    Eigen::MatrixXd prepareCarlemanMatrix(Eigen::MatrixXd &F0,
-                                          Eigen::MatrixXd &F1,
-                                          Eigen::MatrixXd &F2);
+    Eigen::SparseMatrix<double> prepareCarlemanMatrix(Eigen::MatrixXd &F0,
+                                                      Eigen::MatrixXd &F1,
+                                                      Eigen::MatrixXd &F2);
 
     std::vector<Eigen::MatrixXd> us_c_N; // Member to hold the solution matrices
   };

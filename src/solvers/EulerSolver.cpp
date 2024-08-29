@@ -27,7 +27,7 @@ EulerSolver::solve(Eigen::MatrixXd &F0, Eigen::MatrixXd &F1,
 
   auto burgers_odefun = [&](double t, const Eigen::MatrixXd &u) {
     Eigen::VectorXd burger_fun =
-      F0_interp(t) + F1 * u + F2 * matrix::kron(u, u);
+      F0_interp(t) + F1 * u + F2 * matrix::kron(u.sparseView(), u.sparseView());
     return burger_fun;
   };
 
