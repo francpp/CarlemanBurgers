@@ -1,10 +1,23 @@
 # Compiler and flags
 CXX = g++
-CXXFLAGS = -std=c++20 -Iinclude -Iinclude/nlohmann -Isrc -I${mkEigenInc}
+CXXFLAGS = -std=c++20 -Isrc
 
 # Directories
 SRC_DIR = src
 BUILD_DIR = build
+
+# Optional include directories (conditionally added)
+ifneq (,$(shell grep -rl '#include "json.hpp"' $(SRC_DIR)))
+CXXFLAGS += -Iinclude/nlohmann
+endif
+
+ifneq (,$(shell grep -rl '#include <Eigen/' $(SRC_DIR)))
+CXXFLAGS += -I${mkEigenInc}
+endif
+
+ifneq (,$(shell grep -rl '#include "GetPot"' $(SRC_DIR)))
+CXXFLAGS += -Iinclude
+endif
 
 # Source files
 SRC_FILES = $(wildcard $(SRC_DIR)/*.cpp) \
