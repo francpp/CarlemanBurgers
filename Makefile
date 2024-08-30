@@ -19,6 +19,11 @@ ifneq (,$(shell grep -rl '#include "GetPot"' $(SRC_DIR)))
 CXXFLAGS += -Iinclude
 endif
 
+ifneq (,$(shell grep -rl '#include "boost/' $(SRC_DIR)))
+CXXFLAGS += -I${mkBoostInc}
+LDFLAGS += -L${mkBoostLib} -lboost_iostreams -lboost_system -lboost_filesystem
+endif
+
 # Source files
 SRC_FILES = $(wildcard $(SRC_DIR)/*.cpp) \
             $(wildcard $(SRC_DIR)/*/*.cpp) \
@@ -34,7 +39,7 @@ all: $(TARGET)
 
 # Linking
 $(TARGET): $(OBJ_FILES)
-	$(CXX) $(OBJ_FILES) -o $(TARGET)
+	$(CXX) $(OBJ_FILES) -o $(TARGET) $(LDFLAGS)
 
 # Compilation
 $(BUILD_DIR)/%.o: %.cpp
