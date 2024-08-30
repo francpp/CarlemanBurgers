@@ -8,14 +8,9 @@ BUILD_DIR = build
 
 # Source files
 SRC_FILES = $(wildcard $(SRC_DIR)/*.cpp) \
-            $(wildcard $(SRC_DIR)/params/*.cpp) \
-            $(wildcard $(SRC_DIR)/discretization/*.cpp) \
-            $(wildcard $(SRC_DIR)/initial_conditions/*.cpp) \
-            $(wildcard $(SRC_DIR)/matrix/*.cpp) \
-            $(wildcard $(SRC_DIR)/solvers/*.cpp) \
-            $(wildcard $(SRC_DIR)/error_analysis/*.cpp) \
-            $(wildcard $(SRC_DIR)/utils/*.cpp) \
+            $(wildcard $(SRC_DIR)/*/*.cpp) \
             main.cpp
+
 OBJ_FILES = $(SRC_FILES:%.cpp=$(BUILD_DIR)/%.o)
 
 # Target executable
