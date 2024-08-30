@@ -6,6 +6,7 @@
 #include "initial_conditions/InitialConditions.hpp"
 #include "matrix/CarlemanMatrix.hpp"
 #include "params/SimulationParameters.hpp"
+#include "plots/plots.hpp"
 #include "solvers/CarlemanSolver.hpp"
 #include "solvers/EulerSolver.hpp"
 #include "solvers/ODE45Solver.hpp"
@@ -13,6 +14,7 @@
 #include "utils/CarlemanUtils.hpp"
 #include "utils/MatrixFormat.hpp"
 #include "utils/StabilityChecks.hpp"
+
 #include <Eigen/Dense>
 
 namespace sim

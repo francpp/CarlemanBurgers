@@ -65,6 +65,12 @@ MainSimulation::run()
   std::cout << "\nDE error: \n" << errorAnalysis.getEpsDEError() << std::endl;
   std::cout << "\nDE error: \n"
             << errorAnalysis.getEpsRelDEError() << std::endl;
+
+  plots::Plotter plotter(params, discretization, initialConditions,
+                         carlemanSolver, eulerSolver, pdeSolver, ode45Solver,
+                         errorAnalysis);
+  plotter.initialize();
+  plotter.plotCarlemanSolution();
 }
 
 void
