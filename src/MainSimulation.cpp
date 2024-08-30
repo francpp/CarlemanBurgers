@@ -1,4 +1,5 @@
 #include "MainSimulation.hpp"
+#include "plots/plots.hpp"
 #include <Eigen/Dense>
 #include <iostream>
 
@@ -65,6 +66,20 @@ MainSimulation::run()
   std::cout << "\nDE error: \n" << errorAnalysis.getEpsDEError() << std::endl;
   std::cout << "\nDE error: \n"
             << errorAnalysis.getEpsRelDEError() << std::endl;
+
+  std::function<Eigen::MatrixXd(double, const Eigen::VectorXd &)> F0_fun =
+    [](double t, const Eigen::VectorXd &xs) {
+      Eigen::MatrixXd gaussian =
+        (-((xs.array() - 1.0 / 4).square()) / (2 * std::pow(1.0 / 32, 2)))
+          .exp();
+      double          cos_component = std::cos(2 * M_PI * t);
+      Eigen::MatrixXd result = gaussian * cos_component;
+      return result;
+    };
+
+  // Generate plots
+  plots::Plotter plotter(discretization, errorAnalysis, carlemanSolver,
+                         eulerSolver, ode45Solver, pdeSolver, F0_fun);
 }
 
 void

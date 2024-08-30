@@ -1,6 +1,6 @@
 # Compiler and flags
 CXX = g++
-CXXFLAGS = -std=c++20 -Iinclude -Iinclude/nlohmann -Isrc -I${mkEigenInc}
+CXXFLAGS = -std=c++20 -Iinclude -Iinclude/nlohmann -Isrc -I${mkEigenInc} -I${mkBoostInc}
 
 # Directories
 SRC_DIR = src
@@ -15,18 +15,22 @@ SRC_FILES = $(wildcard $(SRC_DIR)/*.cpp) \
             $(wildcard $(SRC_DIR)/solvers/*.cpp) \
             $(wildcard $(SRC_DIR)/error_analysis/*.cpp) \
             $(wildcard $(SRC_DIR)/utils/*.cpp) \
+            $(wildcard $(SRC_DIR)/plots/*.cpp) \
             main.cpp
 OBJ_FILES = $(SRC_FILES:%.cpp=$(BUILD_DIR)/%.o)
 
 # Target executable
 TARGET = main_executable
 
+# Linker flags
+LDFLAGS = -L${mkBoostLib} -lboost_iostreams -lboost_system -lboost_filesystem
+
 # Default rule
 all: $(TARGET)
 
 # Linking
 $(TARGET): $(OBJ_FILES)
-	$(CXX) $(OBJ_FILES) -o $(TARGET)
+	$(CXX) $(OBJ_FILES) -o $(TARGET) $(LDFLAGS)
 
 # Compilation
 $(BUILD_DIR)/%.o: %.cpp
