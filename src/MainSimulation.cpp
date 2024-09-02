@@ -18,8 +18,7 @@ MainSimulation::MainSimulation(params::SimulationParameters &params)
 void
 MainSimulation::initialize()
 {
-  params
-    .initialize(); // Initialize params (which will now affect all components)
+  params.initialize(); // Initialize params
 
   // Create the discretization and compute initial conditions
   discretization.createDiscretization();
@@ -51,26 +50,29 @@ MainSimulation::run()
   pdeSolver.solve(F0, F1, F2);
 
   errorAnalysis.computeErrors();
-  std::cout << "\nCD error: \n" << errorAnalysis.getEpsCDError() << std::endl;
-  std::cout << "\nRelative CD error: \n"
-            << errorAnalysis.getEpsRelCDError() << std::endl;
-  std::cout << "\nCPDE error: \n"
-            << errorAnalysis.getEpsCPDEError() << std::endl;
-  std::cout << "\nRelative CPDE error: \n"
-            << errorAnalysis.getEpsRelCPDEError() << std::endl;
-  std::cout << "\nDPDE error: \n"
-            << errorAnalysis.getEpsDPDEError() << std::endl;
-  std::cout << "\nRelative DPDE error: \n"
-            << errorAnalysis.getEpsRelDPDEError() << std::endl;
-  std::cout << "\nDE error: \n" << errorAnalysis.getEpsDEError() << std::endl;
-  std::cout << "\nDE error: \n"
-            << errorAnalysis.getEpsRelDEError() << std::endl;
+  // std::cout << "\nCD error: \n" << errorAnalysis.getEpsCDError() <<
+  // std::endl;
+  /*  std::cout << "\nRelative CD error: \n"
+              << errorAnalysis.getEpsRelCDError() << std::endl;
+    std::cout << "\nCPDE error: \n"
+              << errorAnalysis.getEpsCPDEError() << std::endl;
+    std::cout << "\nRelative CPDE error: \n"
+              << errorAnalysis.getEpsRelCPDEError() << std::endl;
+    std::cout << "\nDPDE error: \n"
+              << errorAnalysis.getEpsDPDEError() << std::endl;
+    std::cout << "\nRelative DPDE error: \n"
+              << errorAnalysis.getEpsRelDPDEError() << std::endl;
+    std::cout << "\nDE error: \n" << errorAnalysis.getEpsDEError() << std::endl;
+    std::cout << "\nDE error: \n"
+              << errorAnalysis.getEpsRelDEError() << std::endl;*/
 
   plots::Plotter plotter(params, discretization, initialConditions,
                          carlemanSolver, eulerSolver, pdeSolver, ode45Solver,
                          errorAnalysis);
   plotter.initialize();
-  plotter.plotCarlemanSolution();
+  plotter.plotSolution();
+  plotter.plotErrors();
+  plotter.plotErrorConvergence();
 }
 
 void

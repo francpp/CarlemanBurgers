@@ -35,8 +35,14 @@ namespace plots
     // Method to initialize plot settings
     void initialize();
 
-    // Method to plot initial conditions and solutions
-    void plotCarlemanSolution();
+    // Method to plot solutions
+    void plotSolution();
+
+    // Method to plot the absolute error
+    void plotErrors();
+
+    // Method to plot the error convergence
+    void plotErrorConvergence();
 
   private:
     // Member variables for plot settings and parameters
