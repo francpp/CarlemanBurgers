@@ -1,5 +1,6 @@
 #include "boost/tuple/tuple.hpp"
 #include "plots.hpp"
+#include <boost/filesystem.hpp> // Include Boost.Filesystem for directory creation
 #include <cmath>
 
 namespace sim
@@ -26,6 +27,13 @@ namespace plots
   void
   Plotter::initialize()
   {
+    // Create the output directory if it doesn't exist
+    boost::filesystem::path output_dir("output");
+    if(!boost::filesystem::exists(output_dir))
+      {
+        boost::filesystem::create_directory(output_dir);
+      }
+
     gp << "set terminal pngcairo enhanced size 1200,800\n";
   }
 
@@ -33,7 +41,7 @@ namespace plots
   Plotter::plotSolution()
   {
     // Set output file and initialize the plot title and axis labels
-    gp << "set output 'solution_plot.png'\n";
+    gp << "set output 'output/solution_plot.png'\n";
     gp << "set title 'Solution at T_{nl}/3 and Initial Condition'\n";
     gp << "set xlabel 'x'\n";
     gp << "set ylabel 'u'\n";
@@ -44,7 +52,7 @@ namespace plots
           "'-' with lines title 'Source Shape', "
           "'-' with linespoints title 'Direct Euler at T_{nl}/3', "
           "'-' with lines title 'Carleman N=1 at T_{nl}/3', "
-          "'-' with lines title 'Carleman N=4 at T_{nl}/3'\n";
+          "'-' with lines title 'Carleman N=N_{max} at T_{nl}/3'\n";
 
     const std::vector<double> &xs = discretization.getXs();
     size_t                     nx = xs.size();
@@ -97,9 +105,9 @@ namespace plots
       }
     gp.send1d(euler_solution);
 
-    // Plot Carleman solutions for N=1 and N=4 at T_{nl}/3
+    // Plot Carleman solutions for N=1 and N=N_max at T_{nl}/3
     const auto &us_c_N = carlemanSolver.getUsCN();
-    for(int n : {0, 3}) // N=1 and N=4 (0-based index)
+    for(int n : {0, params.N_max - 1})
       {
         std::vector<std::pair<double, double>> carleman_solution(nx);
         for(size_t i = 0; i < nx; ++i)
@@ -115,7 +123,7 @@ namespace plots
   void
   Plotter::plotErrors()
   {
-    gp << "set output 'error_plot.png'\n";
+    gp << "set output 'output/error_plot.png'\n";
     gp << "set title 'Absolute L_2 Error between Carleman and ODE45 "
           "Solutions'\n";
     gp << "set xlabel 't'\n";
@@ -179,7 +187,7 @@ namespace plots
   void
   Plotter::plotErrorConvergence()
   {
-    gp << "set output 'error_convergence_plot.png'\n";
+    gp << "set output 'output/error_convergence_plot.png'\n";
     gp << "set title 'Error Convergence of Carleman Solutions'\n";
     gp << "set xlabel 'N'\n";
     gp << "set ylabel 'max_t ||\\varepsilon_{\\mathrm{abs}}||_2'\n";

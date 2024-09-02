@@ -27,3 +27,6 @@ make.dep
 # executables
 main_executable
 main
+
+# output files and images
+output/
