@@ -5,6 +5,7 @@
 #include "discretization/Discretization.hpp"
 #include "initial_conditions/InitialConditions.hpp"
 #include "params/SimulationParameters.hpp"
+#include "utils/muparser_fun.hpp"
 #include <Eigen/Dense>
 #include <vector>
 
@@ -31,7 +32,7 @@ private:
 
   double F0_fun(double t, double x) const;
   double pde(double x, double t, double u, double dudx) const;
-  double initial_condition(double x) const;
+  double U0_fun(double x) const;
   void   apply_boundary_conditions(Eigen::VectorXd &u, double t) const;
 
   void solvePDE(Eigen::MatrixXd &us_pde_full);

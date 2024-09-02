@@ -1,5 +1,4 @@
 #include "PDESolver.hpp"
-#include <cmath>
 #include <iostream>
 
 namespace sim::solvers
@@ -32,7 +31,7 @@ PDESolver::pde(double x, double t, double u, double dudx) const
 }
 
 double
-PDESolver::initial_condition(double x) const
+PDESolver::U0_fun(double x) const
 {
   double L0 = params.L0;
   double U0 = params.U0;
@@ -60,7 +59,7 @@ PDESolver::solvePDE(Eigen::MatrixXd &us_pde_full)
   // Initial condition
   for(int i = 0; i < nx_pde; ++i)
     {
-      us_pde_full(0, i) = initial_condition(xs_pde[i]);
+      us_pde_full(0, i) = U0_fun(xs_pde[i]);
     }
 
   // Time-stepping loop with refinement
