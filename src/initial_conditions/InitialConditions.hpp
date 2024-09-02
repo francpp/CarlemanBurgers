@@ -46,8 +46,8 @@ private:
   std::vector<double>              u0s;        // Initial condition array
   std::vector<std::vector<double>> F0, F1, F2; // Forcing matrices
 
-  std::string F0_fun_string; // Source function
-  std::string u0_fun_string; // Initial condition function
+  std::string F0_expr; // Source function
+  std::string U0_expr; // Initial condition function
 };
 
 std::ostream &operator<<(std::ostream &, const InitialConditions &);

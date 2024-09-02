@@ -10,7 +10,10 @@ InitialConditions::InitialConditions(
   const sim::params::SimulationParameters   &params,
   const sim::discretization::Discretization &discretization)
   : params(params), discretization(discretization)
-{}
+{
+  F0_expr = params.F0_fun;
+  U0_expr = params.U0_fun;
+}
 
 void
 InitialConditions::computeInitialConditions()
@@ -24,10 +27,9 @@ InitialConditions::computeInitialConditions()
   double L0 = params.L0;
   double f = params.f;
 
-  std::string                     u0_expr = "-U0*sin(2*pi*f*x/L0)";
   std::map<std::string, double *> u0_vars = {
     {"x", &x_var}, {"U0", &U0}, {"L0", &L0}, {"f", &f}};
-  utils::MuparserFun u0_fun(u0_expr, u0_vars);
+  utils::MuparserFun u0_fun(U0_expr, u0_vars);
 
   std::transform(xs.begin(), xs.end(), u0s.begin(), [&](double x) {
     std::map<std::string, double> u0_values = {{"x", x}};
@@ -52,7 +54,6 @@ InitialConditions::computeForcingBoundaryConditions()
   double U0 = params.U0;
   double L0 = params.L0;
 
-  std::string F0_expr = "U0*exp(-(x-L0/4)^2/(2*(L0/32)^2))*cos(2*pi*t)";
   std::map<std::string, double *> F0_vars = {
     {"t", &t_var}, {"x", &x_var}, {"U0", &U0}, {"L0", &L0}};
   utils::MuparserFun F0_fun(F0_expr, F0_vars);
