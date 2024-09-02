@@ -1,4 +1,5 @@
 #include "InitialConditions.hpp"
+#include "utils/muparser_fun.hpp"
 #include <algorithm>
 #include <cmath>
 
@@ -9,15 +10,7 @@ InitialConditions::InitialConditions(
   const sim::params::SimulationParameters   &params,
   const sim::discretization::Discretization &discretization)
   : params(params), discretization(discretization)
-{
-  // Define the source function F0_fun
-  F0_fun = [&](double t, double x) {
-    return params.U0 *
-           std::exp(-std::pow(x - params.L0 / 4, 2) /
-                    (2 * std::pow(params.L0 / 32, 2))) *
-           std::cos(2 * M_PI * t);
-  };
-}
+{}
 
 void
 InitialConditions::computeInitialConditions()
@@ -26,8 +19,19 @@ InitialConditions::computeInitialConditions()
   u0s.resize(xs.size());
 
   // Compute initial condition u0(x) = -U0 * sin(2 * pi * f * x / L0)
+  double x_var = 0.0; // placeholder for x
+  double U0 = params.U0;
+  double L0 = params.L0;
+  double f = params.f;
+
+  std::string                     u0_expr = "-U0*sin(2*pi*f*x/L0)";
+  std::map<std::string, double *> u0_vars = {
+    {"x", &x_var}, {"U0", &U0}, {"L0", &L0}, {"f", &f}};
+  utils::MuparserFun u0_fun(u0_expr, u0_vars);
+
   std::transform(xs.begin(), xs.end(), u0s.begin(), [&](double x) {
-    return -params.U0 * std::sin(2 * M_PI * params.f * x / params.L0);
+    std::map<std::string, double> u0_values = {{"x", x}};
+    return u0_fun(u0_values);
   });
 }
 
@@ -43,10 +47,23 @@ InitialConditions::computeForcingBoundaryConditions()
 
   // Initialize F0
   F0.resize(nt, std::vector<double>(nx, 0));
+  double t_var = 0.0; // placeholder for t
+  double x_var = 0.0; // placeholder for x
+  double U0 = params.U0;
+  double L0 = params.L0;
+
+  std::string F0_expr = "U0*exp(-(x-L0/4)^2/(2*(L0/32)^2))*cos(2*pi*t)";
+  std::map<std::string, double *> F0_vars = {
+    {"t", &t_var}, {"x", &x_var}, {"U0", &U0}, {"L0", &L0}};
+  utils::MuparserFun F0_fun(F0_expr, F0_vars);
+
   for(int it = 0; it < nt; ++it)
     {
-      std::transform(xs.begin(), xs.end(), F0[it].begin(),
-                     [&](double x) { return F0_fun(ts[it], x); });
+      std::transform(xs.begin(), xs.end(), F0[it].begin(), [&](double x) {
+        std::map<std::string, double> F0_values = {{"t", ts[it]}, {"x", x}};
+
+        return F0_fun(F0_values);
+      });
     }
 
   // Initialize F1

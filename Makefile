@@ -24,6 +24,11 @@ CXXFLAGS += -I${mkBoostInc}
 LDFLAGS += -L${mkBoostLib} -lboost_iostreams -lboost_system -lboost_filesystem
 endif
 
+ifneq (,$(shell grep -rl '"utils/muparser_fun.hpp"' $(SRC_DIR)))
+CXXFLAGS += -Iinclude
+LDFLAGS += -L/home/fpettenon/PACS/pacs-examples/Examples/lib -lmuparser
+endif
+
 # Source files
 SRC_FILES = $(wildcard $(SRC_DIR)/*.cpp) \
             $(wildcard $(SRC_DIR)/*/*.cpp) \
