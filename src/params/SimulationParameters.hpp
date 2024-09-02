@@ -5,6 +5,7 @@
 #include <functional>
 #include <iosfwd>
 #include <iostream>
+#include <string>
 
 namespace sim::params
 {
@@ -39,12 +40,14 @@ struct SimulationParameters
   double f = 1;
   //! Simulation time
   double T = 3;
-  //! Source function
-  // TODO F0_fun
   //! Maximum Carleman truncation level
   int N_max = 4;
   //! Degree of the Carleman ODE
   int ode_deg = 2;
+  //! Initial condition function
+  std::string U0_fun = "-U0*sin(2*pi*f*x/L0)";
+  //! Source function
+  std::string F0_fun = "U0*exp(-(x-L0/4)^2/(2*(L0/32)^2))*cos(2*pi*t)";
 
   void initialize();
 };

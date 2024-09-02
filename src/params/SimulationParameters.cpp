@@ -28,6 +28,8 @@ operator<<(std::ostream &out, const SimulationParameters &p)
   out << "T = " << p.T << "\n";
   out << "N_max = " << p.N_max << "\n";
   out << "ode_deg = " << p.ode_deg << "\n";
+  out << "U0_fun = " << p.U0_fun << "\n";
+  out << "F0_fun = " << p.F0_fun << "\n";
   return out;
 }
 

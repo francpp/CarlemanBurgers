@@ -41,6 +41,8 @@ readParameters(const std::string &filename, bool verbose)
   values.T = ifile("T", defaults.T);
   values.N_max = ifile("N_max", defaults.N_max);
   values.ode_deg = ifile("ode_deg", defaults.ode_deg);
+  values.U0_fun = ifile("U0_fun", defaults.U0_fun);
+  values.F0_fun = ifile("F0_fun", defaults.F0_fun);
   if(verbose)
     {
       std::cout << "PARAMETER VALUES IN GETPOT FILE"
@@ -90,6 +92,8 @@ readParameters_json(const std::string &filename, bool verbose)
   values.T = ifile.value("T", defaults.T);
   values.N_max = ifile.value("N_max", defaults.N_max);
   values.ode_deg = ifile.value("ode_deg", defaults.ode_deg);
+  values.U0_fun = ifile.value("U0_fun", defaults.U0_fun);
+  values.F0_fun = ifile.value("F0_fun", defaults.F0_fun);
   if(verbose)
     {
       std::cout << "PARAMETER VALUES IN JSON FILE"
