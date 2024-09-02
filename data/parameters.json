@@ -9,5 +9,7 @@
     "f": 1,
     "T": 3,
     "N_max": 4,
-    "ode_deg": 2
+    "ode_deg": 2,
+    "U0_fun": "-U0*sin(2*pi*f*x/L0)",
+    "F0_fun": "U0*exp(-(x-L0/4)^2/(2*(L0/32)^2))*cos(2*pi*t)"
 }
