@@ -1,32 +1,24 @@
 #include "GetPot" // for reading parameters
 #include "MainSimulation.hpp"
-#ifdef GNUPLOT
-#include "gnuplot-iostream.hpp" // interface with gnuplot
-#endif
 #include "params/SimulationParameters.hpp"
 #include "params/readParameters.hpp"
-#include <algorithm> // For std::generate
-#include <cmath>     // (for sqrt)
-#include <iostream>  // input output
-#include <numeric>   // For std::iota
-#include <tuple>     // I am using tuples to pass data to gnuplot iostream
-#include <vector>    // For vectors
+#include <iostream> // input output
 
 /*!
   @file main.cpp
   @brief Carleman Burgers
 
-  @detail
-% Solution of the inhomogeneous, viscous Burgers equation, possibly with
-% linear damping, using a direct application of the Carleman method
-% combined with Euler's method. The result is compared with solutions from
-% inbuilt MATLAB solvers.
-%
-% This script in its current state should reproduce the results in
-% https://arxiv.org/abs/2011.03185, "Efficient quantum algorithm for
-% dissipative nonlinear differential equations" by Jin-Peng Liu,
-% Herman Øie Kolden, Hari K. Krovi, Nuno F. Loureiro, Konstantina Trivisa,
-% Andrew M. Childs.
+  @details
+  Solution of the inhomogeneous, viscous Burgers equation, possibly with
+  linear damping, using a direct application of the Carleman method
+  combined with Euler's method. The result is compared with solutions from
+  inbuilt MATLAB solvers.
+
+  This script in its current state should reproduce the results in
+  https://arxiv.org/abs/2011.03185, "Efficient quantum algorithm for
+  dissipative nonlinear differential equations" by Jin-Peng Liu,
+  Herman Øie Kolden, Hari K. Krovi, Nuno F. Loureiro, Konstantina Trivisa,
+  Andrew M. Childs.
  */
 
 //! a helper function. Prints a help message
