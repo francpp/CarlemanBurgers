@@ -1,6 +1,6 @@
 #include "boost/tuple/tuple.hpp"
 #include "plots.hpp"
-#include <boost/filesystem.hpp> // Include Boost.Filesystem for directory creation
+#include <boost/filesystem.hpp>
 #include <cmath>
 
 namespace sim
@@ -23,7 +23,6 @@ namespace plots
       errorAnalysis(errorAnalysis)
   {}
 
-  // Initialize plot settings
   void
   Plotter::initialize()
   {
@@ -78,8 +77,6 @@ namespace plots
     double              t_plot = T_nl / 3;
     std::vector<double> ts = discretization.getTs();
     int                 i_plot = -1;
-    int                 i_plot_pde = -1;
-    int                 i_start = -1;
 
     // Find i_plot
     for(size_t i = 0; i < ts.size(); ++i)
@@ -89,12 +86,6 @@ namespace plots
             i_plot = i + 1;
             break;
           }
-      }
-
-    // Calculate i_start
-    if(i_plot != -1)
-      {
-        i_start = static_cast<int>(std::ceil(i_plot * 3.0 / 4.0));
       }
 
     std::vector<std::pair<double, double>> euler_solution(nx);
@@ -148,9 +139,6 @@ namespace plots
           }
       }
 
-    // Calculate i_start
-    int i_start =
-      (i_plot != -1) ? static_cast<int>(std::ceil(i_plot * 3.0 / 4.0)) : -1;
     // Prepare Carleman errors for different N
     const auto &eps_c_d_N = errorAnalysis.getEpsCDError();
     for(size_t N = 0; N < eps_c_d_N.rows(); ++N)
@@ -174,7 +162,7 @@ namespace plots
 
     // Add the vertical line at T_{nl}/3
     double min_val =
-      eps_c_d_N.block(0, i_start, eps_c_d_N.rows(), eps_c_d_N.cols() - i_start)
+      eps_c_d_N.block(0, i_plot, eps_c_d_N.rows(), eps_c_d_N.cols() - i_plot)
         .minCoeff();
     double max_val = eps_c_d_N.row(0).maxCoeff();
     std::vector<std::pair<double, double>> t_plot_line = {
