@@ -6,7 +6,17 @@ namespace sim
 namespace utils
 {
 
-  // Function to compute the eigenvalues of a matrix (placeholder).
+  /**
+   * @brief Computes the eigenvalues of a given matrix.
+   *
+   * This function uses Eigen's `EigenSolver` to compute the eigenvalues
+   * of a square matrix.
+   *
+   * @param matrix The input matrix for which the eigenvalues are to be
+   * computed.
+   * @return A vector of complex numbers containing the eigenvalues of the
+   * matrix.
+   */
   Eigen::VectorXcd
   eig(const Eigen::MatrixXd &matrix)
   {
@@ -15,6 +25,17 @@ namespace utils
     return eigenvalues;
   }
 
+  /**
+   * @brief Computes the spectral norm of a matrix.
+   *
+   * The spectral norm of a matrix is the largest singular value of the matrix.
+   * This function computes it using Eigen's `JacobiSVD`.
+   *
+   * @param matrix The input matrix for which the spectral norm is to be
+   * computed.
+   * @return The spectral norm of the matrix, which is the largest singular
+   * value.
+   */
   double
   spectralNorm(const Eigen::MatrixXd &matrix)
   {
@@ -51,7 +72,6 @@ namespace utils
     double f0 = 0.0;
 
     // Convert F0_vec to Eigen::MatrixXd for the norm calculation
-
     for(int it = 0; it < nt; ++it)
       {
         double currentNorm = F0.row(it).norm();

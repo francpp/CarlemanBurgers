@@ -10,9 +10,22 @@ namespace sim
 {
 namespace utils
 {
+  /**
+   * @class MuparserFun
+   * @brief Wrapper around the muParser library to simplify function parsing and
+   * evaluation.
+   *
+   * The MuparserFun class allows you to define mathematical expressions with
+   * variables, and then evaluate those expressions by providing values for the
+   * variables.
+   */
   class MuparserFun
   {
   public:
+    /**
+     * @brief Copy constructor for MuparserFun.
+     * @param m The MuparserFun object to copy from.
+     */
     MuparserFun(const MuparserFun &m) : m_parser(m.m_parser), m_vars(m.m_vars)
     {
       for(auto &var : m_vars)
@@ -21,6 +34,12 @@ namespace utils
         }
     }
 
+    /**
+     * @brief Constructor that initializes the muParser object with a given
+     * expression and variables.
+     * @param expr The mathematical expression to parse.
+     * @param variables A map of variable names to pointers to their values.
+     */
     MuparserFun(const std::string                     &expr,
                 const std::map<std::string, double *> &variables)
     {
@@ -42,6 +61,13 @@ namespace utils
         }
     }
 
+    /**
+     * @brief Evaluates the expression with the provided values for variables.
+     * @param values A map of variable names to their corresponding values to be
+     * used in the expression.
+     * @return The result of evaluating the expression.
+     * @throws mu::Parser::exception_type if the evaluation fails.
+     */
     double
     operator()(const std::map<std::string, double> &values)
     {
@@ -62,8 +88,10 @@ namespace utils
     }
 
   private:
-    std::map<std::string, double *> m_vars;
-    mu::Parser                      m_parser;
+    std::map<std::string, double *>
+      m_vars; ///< Map of variable names to their corresponding pointers.
+    mu::Parser
+      m_parser; ///< muParser object for parsing and evaluating expressions.
   };
 } // namespace utils
 } // namespace sim
