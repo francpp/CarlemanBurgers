@@ -102,56 +102,48 @@ ErrorAnalysis::computeErrors()
 
 // Getter methods to retrieve computed errors
 
-// L2 norm of absolute error between Carleman and ODE solutions
 const Eigen::MatrixXd &
 ErrorAnalysis::getEpsCDError() const
 {
   return eps_c_d_N;
 }
 
-// L-inf norm of relative error between Carleman and ODE solutions
 const Eigen::MatrixXd &
 ErrorAnalysis::getEpsRelCDError() const
 {
   return eps_rel_c_d_N;
 }
 
-// L2 norm of absolute error between Carleman and PDE solutions
 const Eigen::MatrixXd &
 ErrorAnalysis::getEpsCPDEError() const
 {
   return eps_c_pde_N;
 }
 
-// L-inf norm of relative error between Carleman and PDE solutions
 const Eigen::MatrixXd &
 ErrorAnalysis::getEpsRelCPDEError() const
 {
   return eps_rel_c_pde_N;
 }
 
-// L2 norm of absolute error between ODE and PDE solutions
 const Eigen::VectorXd &
 ErrorAnalysis::getEpsDPDEError() const
 {
   return eps_d_pde;
 }
 
-// L-inf norm of relative error between ODE and PDE solutions
 const Eigen::VectorXd &
 ErrorAnalysis::getEpsRelDPDEError() const
 {
   return eps_rel_d_pde;
 }
 
-// L2 norm of absolute error between ODE and Euler solutions
 const Eigen::VectorXd &
 ErrorAnalysis::getEpsDEError() const
 {
   return eps_d_e;
 }
 
-// L-inf norm of relative error between ODE and Euler solutions
 const Eigen::VectorXd &
 ErrorAnalysis::getEpsRelDEError() const
 {
