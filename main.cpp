@@ -44,7 +44,6 @@ printHelp()
 int
 main(int argc, char **argv)
 {
-  bool   jsonfile = false;
   int    status{0}; // Status of the program
   GetPot cl(argc, argv);
   if(cl.search(2, "-h", "--help"))
@@ -56,23 +55,9 @@ main(int argc, char **argv)
   bool verbose = cl.search(1, "-v");
   // Get file with parameter values
   std::string filename = cl.follow("data/parameters.pot", "-p");
-  auto        pos = filename.find(".json");
-  if(pos != std::string::npos)
-    {
-      jsonfile = true;
-      std::cout << "Json input file\n";
-    }
-  else
-    {
-      jsonfile = false;
-      std::cout << "Getpot input file\n";
-    }
-  std::cout << "Reading parameters from " << filename << std::endl;
+
   sim::params::SimulationParameters param;
-  if(jsonfile)
-    param = sim::params::readParameters_json(filename, verbose);
-  else
-    param = sim::params::readParameters(filename, verbose);
+  param = sim::params::readParameters(filename, verbose);
 
   // Pass param as a reference to MainSimulation
   sim::MainSimulation simulation(param);

@@ -6,9 +6,32 @@
 
 namespace sim::params
 {
-
 SimulationParameters
 readParameters(const std::string &filename, bool verbose)
+{
+  bool jsonfile = false;
+  auto pos = filename.find(".json");
+  if(pos != std::string::npos)
+    {
+      jsonfile = true;
+      std::cout << "Json input file\n";
+    }
+  else
+    {
+      jsonfile = false;
+      std::cout << "Getpot input file\n";
+    }
+  std::cout << "Reading parameters from " << filename << std::endl;
+  sim::params::SimulationParameters param;
+  if(jsonfile)
+    param = sim::params::readParameters_json(filename, verbose);
+  else
+    param = sim::params::readParameters_pot(filename, verbose);
+  return param;
+}
+
+SimulationParameters
+readParameters_pot(const std::string &filename, bool verbose)
 {
   // Parameter default constructor fills it with the defaults values
   SimulationParameters defaults;

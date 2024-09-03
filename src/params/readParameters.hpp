@@ -6,14 +6,15 @@
 
 namespace sim::params
 {
-
+SimulationParameters readParameters(const std::string &filename,
+                                    bool               verbose = false);
 //! Reads problem parameters from GetPot file
 /*!
   @param filename The getopot file with the new values
   @param verbose Prints some information on the parameters
  */
-SimulationParameters readParameters(const std::string &filename,
-                                    bool               verbose = false);
+SimulationParameters readParameters_pot(const std::string &filename,
+                                        bool               verbose = false);
 
 //! Reads problem parameters from json file
 /*!
