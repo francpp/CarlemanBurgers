@@ -5,6 +5,11 @@
 namespace sim
 {
 
+/**
+ * @brief Constructs the MainSimulation object and initializes solvers and other
+ * components.
+ * @param params Reference to the simulation parameters.
+ */
 MainSimulation::MainSimulation(params::SimulationParameters &params)
   : params(params), // Initialize the member variable params with the reference
     discretization(params), initialConditions(params, discretization),
@@ -15,6 +20,10 @@ MainSimulation::MainSimulation(params::SimulationParameters &params)
     errorAnalysis(eulerSolver, ode45Solver, pdeSolver, carlemanSolver, params)
 {}
 
+/**
+ * @brief Initializes the simulation, sets up the discretization and initial
+ * conditions.
+ */
 void
 MainSimulation::initialize()
 {
@@ -27,11 +36,17 @@ MainSimulation::initialize()
   initialConditions.computeInitialConditions();
   initialConditions.computeForcingBoundaryConditions(); // Compute the forcing
                                                         // boundary conditions
+
+  // Convert initial conditions to Eigen matrices
   F0 = matrixUtils::convertToDenseEigen(initialConditions.getF0());
   F1 = matrixUtils::convertToDenseEigen(initialConditions.getF1());
   F2 = matrixUtils::convertToDenseEigen(initialConditions.getF2());
 }
 
+/**
+ * @brief Runs the simulation, solves the systems using different methods, and
+ * performs error analysis.
+ */
 void
 MainSimulation::run()
 {
@@ -49,23 +64,10 @@ MainSimulation::run()
   ode45Solver.solve(F0, F1, F2);
   pdeSolver.solve(F0, F1, F2);
 
+  // Perform error analysis
   errorAnalysis.computeErrors();
-  // std::cout << "\nCD error: \n" << errorAnalysis.getEpsCDError() <<
-  // std::endl;
-  /*  std::cout << "\nRelative CD error: \n"
-              << errorAnalysis.getEpsRelCDError() << std::endl;
-    std::cout << "\nCPDE error: \n"
-              << errorAnalysis.getEpsCPDEError() << std::endl;
-    std::cout << "\nRelative CPDE error: \n"
-              << errorAnalysis.getEpsRelCPDEError() << std::endl;
-    std::cout << "\nDPDE error: \n"
-              << errorAnalysis.getEpsDPDEError() << std::endl;
-    std::cout << "\nRelative DPDE error: \n"
-              << errorAnalysis.getEpsRelDPDEError() << std::endl;
-    std::cout << "\nDE error: \n" << errorAnalysis.getEpsDEError() << std::endl;
-    std::cout << "\nDE error: \n"
-              << errorAnalysis.getEpsRelDEError() << std::endl;*/
 
+  // Generate plots
   plots::Plotter plotter(params, discretization, initialConditions,
                          carlemanSolver, eulerSolver, pdeSolver, ode45Solver,
                          errorAnalysis);
@@ -75,6 +77,11 @@ MainSimulation::run()
   plotter.plotErrorConvergence();
 }
 
+/**
+ * @brief Checks the stability conditions, such as CFL conditions, for the
+ * simulation.
+ * @throws std::runtime_error if the CFL conditions are not met.
+ */
 void
 MainSimulation::checkStabilityConditions()
 {
@@ -97,6 +104,10 @@ MainSimulation::checkStabilityConditions()
     }
 }
 
+/**
+ * @brief Evaluates the Carleman convergence number.
+ * @throws std::runtime_error if there is an error in the calculation.
+ */
 void
 MainSimulation::evaluateCarlemanNumber()
 {

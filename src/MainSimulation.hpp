@@ -19,32 +19,66 @@
 
 namespace sim
 {
+/**
+ * @class MainSimulation
+ * @brief This class manages the entire simulation process, including
+ * initialization, running the simulation, and error analysis.
+ */
 class MainSimulation
 {
-  params::SimulationParameters         &params; // Reference to params
-  discretization::Discretization        discretization;
-  initial_conditions::InitialConditions initialConditions;
+  params::SimulationParameters &params; ///< Reference to simulation parameters.
+  discretization::Discretization
+    discretization; ///< Handles the discretization of the domain.
+  initial_conditions::InitialConditions
+    initialConditions; ///< Manages the initial and boundary conditions.
 
-  solvers::EulerSolver    eulerSolver;
-  solvers::ODE45Solver    ode45Solver;
-  solvers::PDESolver      pdeSolver;
-  solvers::CarlemanSolver carlemanSolver;
+  solvers::EulerSolver eulerSolver; ///< Solver using Euler's method.
+  solvers::ODE45Solver ode45Solver; ///< Solver using MATLAB's ODE45 method.
+  solvers::PDESolver
+    pdeSolver; ///< Solver for the PDE using central difference.
+  solvers::CarlemanSolver
+    carlemanSolver; ///< Solver using the Carleman linearization method.
 
-  error_analysis::ErrorAnalysis errorAnalysis;
+  error_analysis::ErrorAnalysis
+    errorAnalysis; ///< Performs error analysis on the results.
 
-  Eigen::MatrixXd             F0; // Dense matrix for F0
-  Eigen::MatrixXd             F1; // Dense matrix for F1
-  Eigen::MatrixXd             F2; // Dense matrix for F2
+  Eigen::MatrixXd F0; ///< Dense matrix for initial conditions.
+  Eigen::MatrixXd F1; ///< Dense matrix for first-order conditions.
+  Eigen::MatrixXd F2; ///< Dense matrix for second-order conditions.
 
-  void checkStabilityConditions(); // Method to check CFL conditions
-  void evaluateCarlemanNumber();   // Method to evaluate Carleman number
+  /**
+   * @brief Checks the stability conditions, such as CFL conditions, for the
+   * simulation.
+   * @throws std::runtime_error if the CFL conditions are not met.
+   */
+  void checkStabilityConditions();
+
+  /**
+   * @brief Evaluates the Carleman convergence number.
+   * @throws std::runtime_error if there is an error in the calculation.
+   */
+  void evaluateCarlemanNumber();
 
 public:
+  /**
+   * @brief Constructor for MainSimulation.
+   * @param params Reference to the simulation parameters.
+   */
   MainSimulation(params::SimulationParameters &params);
 
-  void initialize(); // Method to initialize the simulation
-  void run();        // Method to run the simulation
+  /**
+   * @brief Initializes the simulation by setting up parameters, discretization,
+   * and initial conditions.
+   */
+  void initialize();
+
+  /**
+   * @brief Runs the simulation, solves the systems, and performs error
+   * analysis.
+   */
+  void run();
 };
+
 } // namespace sim
 
 #endif // MAIN_SIMULATION_HPP
