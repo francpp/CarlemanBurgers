@@ -37,31 +37,66 @@ This problem is then linearized using the Carleman method, leading to the follow
 
 Additionally, the project addresses the solution of the following partial differential equations (PDEs):
 
-TODO
 
 ## Usage Instructions
 
 To set up and run the solver, follow these steps:
 
-1. **Installation (TODO):** 
+1. **Clone the Repository:**
+   - First, clone the necessary repository with the following command:
+     ```bash
+     git clone --recursive https://github.com/pacs-course/pacs-examples.git
+     ```
+   - This will load the `pacs-examples` folder into your project directory.
+
+2. **Modify Makefile:**
+   - After cloning, modify the `PACS_ROOT` variable in the `Makefile` to point to the correct directory. This step ensures that the project is correctly configured with the necessary paths.
+
+3. **Load Necessary Modules:**
+   - Before proceeding with the installation, load the required modules by running:
+     ```bash
+     scripts/load_modules.sh
+     ```
+
+4. **Installation:**
    - Navigate to the project directory and run:
      ```bash
      make install
      ```
-   - This command installs necessary dependencies and prepares the environment.
+   - This command installs the necessary dependencies and prepares the environment.
 
-2. **Compilation:**
+5. **Compilation:**
    - Compile the code by running:
      ```bash
      make
      ```
-   - This generates the executable files needed to run simulations.
+   - This will generate the executable files needed to run simulations.
 
-3. **Execution:**
+6. **Set Library Path:**
+   - Set the library path to include the `lib` directory:
+     ```bash
+     LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:$(pwd)/lib
+     ```
+
+7. **Execution:**
    - Execute the main simulation by running:
      ```bash
      ./main_executable
      ```
+
+8. **Generating Documentation:**
+   - To generate documentation, run:
+     ```bash
+     make docs
+     ```
+
+9. **Cleaning the Build:**
+   - To clean up the build files, use:
+     ```bash
+     make clean
+     ```
+
+These steps will guide you through setting up, compiling, and running the solver, along with generating documentation and cleaning up your build environment.
 
 4. **Modifying Parameters:**
    - The simulation parameters can be adjusted by editing the files located in `data/parameters.pot` and `data/parameters.json`. These files control various aspects of the simulation, including initial conditions, solver settings, and physical parameters.
@@ -79,6 +114,7 @@ The project directory is organized as follows:
   - **error analysis/**: Modules for analyzing and calculating the error in the numerical solutions.
   - **initial conditions/**: Functions and classes for setting up the initial conditions of the simulations.
   - **params/**: Handling and processing of parameter files.
+  - **plots/**: Generate plots with solution and errors.
   - **solvers/**: Implementation of the solvers, including Carleman linearization and Euler's method.
   - **utils/**: Utility functions and helpers used across the project.
   - **mainSimulation.hpp** and **mainSimulation.cpp**: The main simulation implementation files that drive the core functionality.
