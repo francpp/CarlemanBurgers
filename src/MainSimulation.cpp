@@ -53,8 +53,6 @@ void
 MainSimulation::run()
 {
   std::cout << "Running simulation..." << std::endl;
-  std::cout << params << std::endl;
-  std::cout << discretization << std::endl;
 
   evaluateCarlemanNumber();
 
