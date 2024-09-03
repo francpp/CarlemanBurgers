@@ -68,7 +68,7 @@ PDESolver::solvePDE(Eigen::MatrixXd &us_pde_full)
       Eigen::VectorXd u = us_pde_full.row(n);
       Eigen::VectorXd dudx(nx_pde);
 
-      // Compute dudx using central difference with higher order accuracy
+      // Compute dudx using central difference
       for(int i = 1; i < nx_pde - 1; ++i)
         {
           dudx(i) = (u(i + 1) - u(i - 1)) / (2 * dx);

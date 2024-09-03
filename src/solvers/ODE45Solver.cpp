@@ -47,11 +47,13 @@ ODE45Solver::solve(Eigen::MatrixXd &F0, Eigen::MatrixXd &F1,
 
       Eigen::MatrixXd u = us_ode.row(i - 1).transpose();
 
+      // Runge-Kutta method (RK45) steps
       Eigen::MatrixXd k1 = burgers_odefun(t, u);
       Eigen::MatrixXd k2 = burgers_odefun(t + 0.5 * h, u + 0.5 * h * k1);
       Eigen::MatrixXd k3 = burgers_odefun(t + 0.5 * h, u + 0.5 * h * k2);
       Eigen::MatrixXd k4 = burgers_odefun(t + h, u + h * k3);
 
+      // Compute the next step
       Eigen::MatrixXd u_next = u + (h / 6.0) * (k1 + 2 * k2 + 2 * k3 + k4);
       us_ode.row(i) = u_next.transpose();
       t = ts_ode[i];
