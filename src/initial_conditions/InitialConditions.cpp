@@ -15,11 +15,6 @@ InitialConditions::InitialConditions(
   U0_expr = params.U0_fun;
 }
 
-/**
- * @brief Computes the initial conditions based on the given expression in the
- * simulation parameters. This initializes the vector u0s with the computed
- * values.
- */
 void
 InitialConditions::computeInitialConditions()
 {
@@ -42,11 +37,6 @@ InitialConditions::computeInitialConditions()
   });
 }
 
-/**
- * @brief Computes the forcing boundary conditions (F0) for the simulation.
- *        This includes initializing and populating the F0 matrix based on the
- * expression in the simulation parameters.
- */
 void
 InitialConditions::computeForcingBoundaryConditions()
 {
@@ -76,12 +66,6 @@ InitialConditions::computeForcingBoundaryConditions()
     }
 }
 
-/**
- * @brief Computes the matrix F1, which contains the linear coefficients
- * corresponding to the linear parts of the equation, such as the diffusion
- * term. This method initializes F1 with the central difference approximation
- * for the second derivative.
- */
 void
 InitialConditions::computeF1()
 {
@@ -103,12 +87,6 @@ InitialConditions::computeF1()
   F1[nx - 1] = std::vector<double>(nx, 0);
 }
 
-/**
- * @brief Computes the matrix F2, which captures the quadratic interactions
- * between the components of u. This matrix primarily represents contributions
- * from the advection term and is sparse, with entries for interactions \( u_j
- * u_{j+1} \) and \( u_j u_{j-1} \).
- */
 void
 InitialConditions::computeF2()
 {
@@ -133,13 +111,6 @@ InitialConditions::computeF2()
   std::fill(F2[nx - 1].begin(), F2[nx - 1].end(), 0);
 }
 
-/**
- * @brief Overload for printing InitialConditions parameters, including matrices
- * F0, F1, F2, and u0s.
- * @param out Output stream.
- * @param d InitialConditions object.
- * @return Reference to the output stream.
- */
 std::ostream &
 operator<<(std::ostream &out, const InitialConditions &d)
 {

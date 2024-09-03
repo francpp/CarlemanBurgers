@@ -97,7 +97,14 @@ private:
     &discretization; ///< Reference to the discretization object.
 
   std::vector<double>              u0s;        ///< Initial condition array.
-  std::vector<std::vector<double>> F0, F1, F2; ///< Forcing matrices.
+  std::vector<std::vector<double>>
+    F0; ///< Matrix F0: Forcing function values over time and space.
+  std::vector<std::vector<double>>
+    F1; ///< Matrix F1: Linear coefficients matrix for diffusion term and other
+        ///< linear parts of the equation.
+  std::vector<std::vector<double>>
+    F2; ///< Matrix F2: Quadratic interaction matrix representing contributions
+        ///< from the advection term.
 
   std::string F0_expr; ///< Source function expression.
   std::string U0_expr; ///< Initial condition function expression.
