@@ -5,6 +5,7 @@ CXXFLAGS = -std=c++20 -Isrc
 # Directories
 SRC_DIR = src
 BUILD_DIR = build
+DOCS_DIR = docs
 
 # Optional include directories (conditionally added)
 ifneq (,$(shell grep -rl '#include "json.hpp"' $(SRC_DIR)))
@@ -51,9 +52,13 @@ $(BUILD_DIR)/%.o: %.cpp
 	@mkdir -p $(dir $@)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
+# Generate documentation
+docs:
+	doxygen Doxyfile
+
 # Clean rule
 clean:
-	rm -rf $(BUILD_DIR) $(TARGET)
+	rm -rf $(BUILD_DIR) $(TARGET) $(DOCS_DIR)
 
 # Phony targets
-.PHONY: all clean
+.PHONY: all clean docs

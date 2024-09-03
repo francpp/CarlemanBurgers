@@ -30,3 +30,6 @@ main
 
 # output files and images
 output/
+
+#generated docs
+docs/*
