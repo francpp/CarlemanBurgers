@@ -36,6 +36,8 @@ MainSimulation::initialize()
   initialConditions.computeInitialConditions();
   initialConditions.computeForcingBoundaryConditions(); // Compute the forcing
                                                         // boundary conditions
+  initialConditions.computeF1();                        // Compute the matrix F1
+  initialConditions.computeF2();                        // Compute the matrix F2
 
   // Convert initial conditions to Eigen matrices
   F0 = matrixUtils::convertToDenseEigen(initialConditions.getF0());
