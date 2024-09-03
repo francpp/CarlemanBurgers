@@ -7,13 +7,15 @@ SRC_DIR = src
 BUILD_DIR = build
 DOCS_DIR = docs
 INCLUDE_DIR = include
+LIB_DIR = lib
 
 # PACS directories
 PACS_ROOT = /home/fpettenon/PACS/pacs-examples
-PACS_INC_DIR = $(PACS_ROOT)/Examples/src/Utilities/
-PACS_EXTRAS_DIR = $(PACS_ROOT)/Extras/
+PACS_INC_DIR = $(PACS_ROOT)/Examples/src/Utilities
+PACS_EXTRAS_DIR = $(PACS_ROOT)/Extras
 PACS_MUPARSER_DIR = $(PACS_EXTRAS_DIR)/muparser/include/
 PACS_JSON_DIR = $(PACS_EXTRAS_DIR)/json/include/nlohmann/
+PACS_LIB_DIR = $(PACS_ROOT)/Examples/lib
 
 # Optional include directories (conditionally added)
 ifneq (,$(shell grep -rl '#include "json.hpp"' $(SRC_DIR)))
@@ -35,7 +37,7 @@ endif
 
 ifneq (,$(shell grep -rl '"utils/muparser_fun.hpp"' $(SRC_DIR)))
 CXXFLAGS += -I$(INCLUDE_DIR)
-LDFLAGS += -L/home/fpettenon/PACS/pacs-examples/Examples/lib -lmuparser
+LDFLAGS += -L$(LIB_DIR) -lmuparser
 endif
 
 # Source files
@@ -69,8 +71,9 @@ clean:
 	rm -rf $(BUILD_DIR) $(TARGET) $(DOCS_DIR)
 	find $(INCLUDE_DIR) -type f ! -name '.gitignore' -delete
 	find $(INCLUDE_DIR) -type d -empty -delete
+	rm -rf $(LIB_DIR)/*
 
-# Install headers and other files
+# Install headers, libraries, and run script
 install:
 	# Copy GetPot and gnuplot headers
 	cp $(PACS_ROOT)/Examples/src/Utilities/GetPot $(INCLUDE_DIR)/
@@ -79,6 +82,11 @@ install:
 	cp -r $(PACS_JSON_DIR) $(INCLUDE_DIR)/
 	# Copy muparser headers
 	cp $(PACS_MUPARSER_DIR)*.h $(INCLUDE_DIR)/
+	# Run install_PACS.sh for muparser
+	cd $(PACS_EXTRAS_DIR)/muparser && ./install_PACS.sh && cd -
+	# Copy muparser shared libraries
+	mkdir -p $(LIB_DIR)
+	cp $(PACS_LIB_DIR)/libmuparser.so* $(LIB_DIR)/
 
 # Phony targets
 .PHONY: all clean docs install
