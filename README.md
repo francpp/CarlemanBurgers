@@ -10,33 +10,31 @@ The current implementation is based on the methodology described in the paper ["
 
 ## Problem Statement
 
-We focus on solving an initial value problem described by the following \(n\)-dimensional quadratic ordinary differential equation (ODE):
+We focus on solving an inhomogeneous, viscous Burgers equation:
+
+```math
+\partial_t u + u \partial_x u = \nu \partial_x^2 u + f
+```
+
+After space discretization, we describe the problem by the following \(n\)-dimensional quadratic ordinary differential equation (ODE):
 
 ```math
 \frac{du}{dt} = F_2 u^{\otimes 2}+ F_1 u + F_0(t), \quad u(0) = u_{\text{in}}.
 ```
+
 Here
 
 ```math
-u = \begin{bmatrix} u_1, \dots, u_n \end{bmatrix}^T \in \mathbb{R}^n, \quad u^{\otimes 2} = \begin{bmatrix} u_1^2, u_1 u_2, \dots, u_1 u_n, u_2 u_1, \dots, u_n u_{n-1}, u_n^2 \end{bmatrix}^T \in \mathbb{R}^{n^2}, \text{each} u_j = u_j(t) \text{is a function of $t$ on the interval} \left[0, T\right]
+u = \begin{bmatrix} u_1, \dots, u_n \end{bmatrix}^T \in \mathbb{R}^n, \quad u^{\otimes 2} = \begin{bmatrix} u_1^2, u_1 u_2, \dots, u_1 u_n, u_2 u_1, \dots, u_n u_{n-1}, u_n^2 \end{bmatrix}^T \in \mathbb{R}^{n^2},
 ```
 
+where each \(u_j = u_j(t)\) is a function of \(t\) on the interval \([0, T]\).
 
-```math
-```
+This problem is then linearized and solved using the **Carleman method**. We compare the solutions with those obtained with classical numerical methods, such as:
 
-```math
-```
-
-
-This problem is then linearized using the Carleman method, leading to the following linear ODE:
-
-```math
-\frac{du}{dt}
-```
-
-Additionally, the project addresses the solution of the following partial differential equations (PDEs):
-
+- Euler Method
+- RK45
+- Direct PDE solvers
 
 ## Usage Instructions
 
@@ -98,16 +96,16 @@ To set up and run the solver, follow these steps:
 
 These steps will guide you through setting up, compiling, and running the solver, along with generating documentation and cleaning up your build environment.
 
-4. **Modifying Parameters:**
-   - The simulation parameters can be adjusted by editing the files located in `data/parameters.pot` and `data/parameters.json`. These files control various aspects of the simulation, including initial conditions, solver settings, and physical parameters.
 
 ## Folder Structure
 
 The project directory is organized as follows:
 
-- **data/**: Contains input data files and parameter settings for the simulations. The primary files to be edited are `parameters.pot` and `parameters.json`.
+- **data/**: Contains input data files and parameter settings for the simulations. The primary files to be edited are `parameters.pot` and `parameters.json`. These files control various aspects of the simulation, including initial conditions, solver settings, and physical parameters.
 
 - **include/**: Header files used throughout the project. This directory contains declarations for functions, classes, and templates that are implemented in the source files.
+
+- **lib/**: 
 
 - **src/**: Contains the source code of the project, further divided into subdirectories:
   - **discretization/**: Code related to the discretization of the PDEs and ODEs.
