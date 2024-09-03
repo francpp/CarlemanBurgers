@@ -2,6 +2,7 @@
 #include "utils/MatrixFormat.hpp"
 #include <Eigen/Sparse>
 #include <iostream>
+
 namespace sim
 {
 namespace matrix
@@ -20,10 +21,12 @@ namespace matrix
 
     Eigen::SparseMatrix<double> C(aRows * bRows, aCols * bCols);
 
+    // Iterate over the elements of matrix A
     for(int k = 0; k < A.outerSize(); ++k)
       {
         for(Eigen::SparseMatrix<double>::InnerIterator it(A, k); it; ++it)
           {
+            // Assign the scaled block to the corresponding position in matrix C
             matrixUtils::assignSparseBlock(C, it.value() * B, it.row() * bRows,
                                            it.col() * bCols);
           }
@@ -37,9 +40,11 @@ namespace matrix
   Eigen::SparseMatrix<double>
   kronp(const Eigen::SparseMatrix<double> &A, int k)
   {
+    // Start with the identity matrix
     Eigen::SparseMatrix<double> B(1, 1);
     B.insert(0, 0) = 1.0;
 
+    // Apply the Kronecker product k times
     for(int i = 0; i < k; ++i)
       {
         B = kron(B, A);
