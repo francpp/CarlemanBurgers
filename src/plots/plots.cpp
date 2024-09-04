@@ -26,21 +26,28 @@ namespace plots
   void
   Plotter::initialize()
   {
-    // Create the output directory if it doesn't exist
-    boost::filesystem::path output_dir("output");
+    // Create the output directory with custom folder structure
+    std::string folder_name = "output/nx_" + std::to_string(params.nx) +
+                              "_nt_" + std::to_string(params.nt) + "_Nmax_" +
+                              std::to_string(params.N_max);
+    boost::filesystem::path output_dir(folder_name);
     if(!boost::filesystem::exists(output_dir))
       {
-        boost::filesystem::create_directory(output_dir);
+        boost::filesystem::create_directories(output_dir);
       }
 
-    gp << "set terminal pngcairo enhanced size 1200,800\n";
+    gp << "set terminal pngcairo enhanced\n"; // Use default size
   }
 
   void
   Plotter::plotSolution()
   {
+    std::string folder_name = "output/nx_" + std::to_string(params.nx) +
+                              "_nt_" + std::to_string(params.nt) + "_Nmax_" +
+                              std::to_string(params.N_max);
+
     // Set output file and initialize the plot title and axis labels
-    gp << "set output 'output/solution_plot.png'\n";
+    gp << "set output '" + folder_name + "/solution_plot.png'\n";
     gp << "set title 'Solution at T_{nl}/3 and Initial Condition'\n";
     gp << "set xlabel 'x'\n";
     gp << "set ylabel 'u'\n";
@@ -60,7 +67,8 @@ namespace plots
     std::vector<std::pair<double, double>> init_condition(nx);
     for(size_t i = 0; i < nx; ++i)
       {
-        init_condition[i] = std::make_pair(xs[i], 0);
+        init_condition[i] =
+          std::make_pair(xs[i], initialConditions.getU0s()[i]);
       }
     gp.send1d(init_condition);
 
@@ -68,7 +76,8 @@ namespace plots
     std::vector<std::pair<double, double>> source_shape(nx);
     for(size_t i = 0; i < nx; ++i)
       {
-        source_shape[i] = std::make_pair(xs[i], 0);
+        source_shape[i] =
+          std::make_pair(xs[i], initialConditions.getF0()[0][i]);
       }
     gp.send1d(source_shape);
 
@@ -114,7 +123,11 @@ namespace plots
   void
   Plotter::plotErrors()
   {
-    gp << "set output 'output/error_plot.png'\n";
+    std::string folder_name = "output/nx_" + std::to_string(params.nx) +
+                              "_nt_" + std::to_string(params.nt) + "_Nmax_" +
+                              std::to_string(params.N_max);
+
+    gp << "set output '" + folder_name + "/error_plot.png'\n";
     gp << "set title 'Absolute L_2 Error between Carleman and ODE45 "
           "Solutions'\n";
     gp << "set xlabel 't'\n";
@@ -175,7 +188,11 @@ namespace plots
   void
   Plotter::plotErrorConvergence()
   {
-    gp << "set output 'output/error_convergence_plot.png'\n";
+    std::string folder_name = "output/nx_" + std::to_string(params.nx) +
+                              "_nt_" + std::to_string(params.nt) + "_Nmax_" +
+                              std::to_string(params.N_max);
+
+    gp << "set output '" + folder_name + "/error_convergence_plot.png'\n";
     gp << "set title 'Error Convergence of Carleman Solutions'\n";
     gp << "set xlabel 'N'\n";
     gp << "set ylabel 'max_t ||\\varepsilon_{\\mathrm{abs}}||_2'\n";
