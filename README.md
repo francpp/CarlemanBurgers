@@ -134,11 +134,13 @@ By following these steps, you will successfully set up, compile, and run the sol
 
 The project directory is organized as follows:
 
+- **build/**: Stores the object (`.o`) files generated during the compilation process. These files are intermediate steps in building the final executable.
+
 - **data/**: Contains input data files and parameter settings for the simulations. The primary files to be edited are `parameters.pot` and `parameters.json`. These files control various aspects of the simulation, including initial conditions, solver settings, and physical parameters.
 
 - **include/**: Header files used throughout the project. This directory contains declarations for functions, classes, and templates that are implemented in the source files.
 
-- **lib/**: 
+- **lib/**: This directory contains the compiled libraries and object files required by the project. These are generated during the build process and are used to link different components of the codebase efficiently.
 
 - **src/**: Contains the source code of the project, further divided into subdirectories:
   - **discretization/**: Code related to the discretization of the PDEs and ODEs.
@@ -153,6 +155,8 @@ The project directory is organized as follows:
 - **main.cpp**: The entry point of the program where the main function resides. It orchestrates the flow of the program by initializing parameters, invoking solvers, and handling output.
 
 - **Makefile**: Automates the build process, including installation, compilation, and cleaning of the project.
+
+- **output/**: Stores the output plots and data generated during the simulation. These files are created automatically as the simulation runs and are used to visualize results and analyze the behavior of the system.
 
 - **README.md**: This file, providing an overview, usage instructions, and a description of the project's structure.
 
