@@ -45,7 +45,7 @@ To set up and run the solver, follow these steps:
 First, clone the necessary repositories:
 
 ```bash
-git clone https://github.com/francpp/CarlemanBurgers.git
+git clone git@github.com:francpp/CarlemanBurgers.git
 git clone --recursive git@github.com:pacs-course/pacs-examples.git
 ```
 
