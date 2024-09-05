@@ -53,7 +53,7 @@ Ensure that `pacs-examples` is cloned **outside** of your project directory (i.e
 
 2. **Modify Makefile**
 
-After cloning, modify the `PACS_ROOT` variable in the `Makefile` inside the project folder (`CarlemanBurgers`) to point to the correct directory where `pacs-examples` is located. This will ensure that all the necessary paths are correctly configured.
+After cloning, modify the `PACS_ROOT` variable in the `Makefile.inc` inside the project folder (`CarlemanBurgers`) to point to the correct directory where `pacs-examples` is located. This will ensure that all the necessary paths are correctly configured.
 
 3. **Load Necessary Modules**
 
