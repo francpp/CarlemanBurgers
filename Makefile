@@ -9,13 +9,7 @@ DOCS_DIR = docs
 INCLUDE_DIR = include
 LIB_DIR = lib
 
-# PACS directories
-PACS_ROOT = /home/fpettenon/PACS/pacs-examples
-PACS_INC_DIR = $(PACS_ROOT)/Examples/src/Utilities
-PACS_EXTRAS_DIR = $(PACS_ROOT)/Extras
-PACS_MUPARSER_DIR = $(PACS_EXTRAS_DIR)/muparser/include/
-PACS_JSON_DIR = $(PACS_EXTRAS_DIR)/json/include/nlohmann/
-PACS_LIB_DIR = $(PACS_ROOT)/Examples/lib
+include Makefile.inc
 
 # Optional include directories (conditionally added)
 ifneq (,$(shell grep -rl '#include "json.hpp"' $(SRC_DIR)))
