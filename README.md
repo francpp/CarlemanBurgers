@@ -57,7 +57,7 @@ After cloning, modify the `PACS_ROOT` variable in the `Makefile.inc` inside the 
 
 3. **Load Necessary Modules**
 
-Load the required modules before proceeding:
+Make sure to load the required modules before proceeding. If mkModules isn't installed, you can find it [here on GitHub](https://github.com/pcafrica/mk).
 
 ```bash
 module load gcc-glibc/11
