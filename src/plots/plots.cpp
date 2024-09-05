@@ -51,14 +51,15 @@ namespace plots
     gp << "set title 'Solution at T_{nl}/3 and Initial Condition'\n";
     gp << "set xlabel 'x'\n";
     gp << "set ylabel 'u'\n";
-    gp << "set key left top\n"; // Move legend to top left for better visibility
+    gp << "set key right top\n"; // Move legend to top right
 
     // Plot the Carleman solutions, initial condition, and PDE solution
-    gp << "plot '-' with lines title 'Initial Condition', "
-          "'-' with lines title 'Source Shape', "
-          "'-' with linespoints title 'Direct Euler at T_{nl}/3', "
-          "'-' with lines title 'Carleman N=1 at T_{nl}/3', "
-          "'-' with lines title 'Carleman N=N_{max} at T_{nl}/3'\n";
+    gp
+      << "plot '-' with lines dashtype 2 title 'Initial Condition', "
+         "'-' with lines dashtype 3 title 'Source Shape', "
+         "'-' with linespoints lc rgb 'blue' title 'Direct Euler at T_{nl}/3', "
+         "'-' with lines lc rgb 'orange' title 'Carleman N=1 at T_{nl}/3', "
+         "'-' with lines lc rgb 'red' title 'Carleman N=N_{max} at T_{nl}/3'\n";
 
     const std::vector<double> &xs = discretization.getXs();
     size_t                     nx = xs.size();
@@ -127,14 +128,6 @@ namespace plots
                               "_nt_" + std::to_string(params.nt) + "_Nmax_" +
                               std::to_string(params.N_max);
 
-    gp << "set output '" + folder_name + "/error_plot.png'\n";
-    gp << "set title 'Absolute L_2 Error between Carleman and ODE45 "
-          "Solutions'\n";
-    gp << "set xlabel 't'\n";
-    gp << "set ylabel '||\\varepsilon_{\\mathrm{abs}}||_2'\n";
-    gp << "set logscale y\n"; // Use logarithmic scale on y-axis
-    gp << "plot ";
-
     // Define the time vector
     const std::vector<double> &ts = discretization.getTs();
     size_t                     nt = ts.size();
@@ -151,22 +144,38 @@ namespace plots
             break;
           }
       }
+    const auto &eps_c_d_N = errorAnalysis.getEpsCDError();
+    double      min_val =
+      eps_c_d_N.block(0, i_plot, eps_c_d_N.rows(), eps_c_d_N.cols() - i_plot)
+        .minCoeff();
+    double max_val = eps_c_d_N.row(0).maxCoeff();
+    gp << "set xrange [" << ts[i_plot / 2] << ":" << ts.back() << "]\n";
+    gp << "set yrange [" << 0.99 * min_val << ":" << 1.1 * max_val << "]\n";
+
+    gp << "set output '" + folder_name + "/error_plot.png'\n";
+    gp << "set title 'Absolute L_2 Error between Carleman and ODE45 "
+          "Solutions'\n";
+    gp << "set xlabel 't'\n";
+    gp << "set ylabel '||err_{abs}||_2'\n";
+    gp << "set logscale y\n"; // Use logarithmic scale on y-axis
+    gp << "set terminal pngcairo size 800,600\n"; // Adjust size for log-scale
+                                                  // plots
+    gp << "plot ";
 
     // Prepare Carleman errors for different N
-    const auto &eps_c_d_N = errorAnalysis.getEpsCDError();
     for(size_t N = 0; N < eps_c_d_N.rows(); ++N)
       {
         if(N > 0)
           gp << ", "; // Separate multiple plots
         gp << "'-' with lines title 'Carleman N=" << (N + 1) << "'";
       }
-    gp << ", '-' with lines lt -1 title 'T_{nl}/3'\n";
+    gp << ", '-' with lines lt 2 dashtype 2 title 'T_{nl}/3'\n";
 
     // Send the data for the errors
     for(size_t i = 0; i < eps_c_d_N.rows(); ++i)
       {
         std::vector<std::pair<double, double>> error_data(nt);
-        for(size_t k = 0; k < nt; ++k)
+        for(size_t k = i_plot / 2; k < nt; ++k)
           {
             error_data[k] = std::make_pair(ts[k], eps_c_d_N(i, k));
           }
@@ -174,34 +183,43 @@ namespace plots
       }
 
     // Add the vertical line at T_{nl}/3
-    double min_val =
-      eps_c_d_N.block(0, i_plot, eps_c_d_N.rows(), eps_c_d_N.cols() - i_plot)
-        .minCoeff();
-    double max_val = eps_c_d_N.row(0).maxCoeff();
     std::vector<std::pair<double, double>> t_plot_line = {
       {t_plot, 0.99 * min_val}, {t_plot, 1.1 * max_val}};
     gp.send1d(t_plot_line);
 
     gp << "unset output\n";
+
+    // Reset Gnuplot state at the end
+    gp << "unset xlabel\n";
+    gp << "unset ylabel\n";
+    gp << "unset logscale\n";
+    gp << "unset title\n";
   }
 
   void
   Plotter::plotErrorConvergence()
   {
+    // Reset Gnuplot state at the beginning
+    gp << "reset\n";
+
     std::string folder_name = "output/nx_" + std::to_string(params.nx) +
                               "_nt_" + std::to_string(params.nt) + "_Nmax_" +
                               std::to_string(params.N_max);
-
-    gp << "set output '" + folder_name + "/error_convergence_plot.png'\n";
-    gp << "set title 'Error Convergence of Carleman Solutions'\n";
-    gp << "set xlabel 'N'\n";
-    gp << "set ylabel 'max_t ||\\varepsilon_{\\mathrm{abs}}||_2'\n";
-    gp << "set logscale y\n";
 
     const auto     &eps_c_d_N = errorAnalysis.getEpsCDError();
     size_t          N_max = eps_c_d_N.rows();
     Eigen::VectorXd max_values;
     max_values = eps_c_d_N.rowwise().maxCoeff();
+    double min_val = max_values.minCoeff();
+    double max_val = max_values.maxCoeff();
+
+    gp << "set yrange [" << 0.99 * min_val << ":" << 1.1 * max_val << "]\n";
+
+    gp << "set output '" + folder_name + "/error_convergence_plot.png'\n";
+    gp << "set title 'Error Convergence of Carleman Solutions'\n";
+    gp << "set xlabel 'N'\n";
+    gp << "set ylabel 'max_t ||err_{abs}||_2'\n";
+    gp << "set logscale y\n";
 
     // Prepare data for max error over time for each N
     std::vector<std::pair<int, double>> max_error_data(N_max);
